@@ -34,7 +34,7 @@ public class KeyBindHandler extends KeyHandler
 	{
 		if (kb.keyDescription.contains("activateDualWield"))
 		{
-			if (Assets.isClient())
+			if (Assets.isClient() && tickEnd)
 			{
 				EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 

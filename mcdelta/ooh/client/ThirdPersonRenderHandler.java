@@ -51,12 +51,13 @@ public class ThirdPersonRenderHandler
 			EntityPlayer player = event.entityPlayer;
 			RenderPlayer renderer = event.renderer;
 
+			
+			Field fi1 = renderer.getClass().getDeclaredField("modelBipedMain");
+			fi1.setAccessible(true);
+			modelBipedMain = (ModelBiped) fi1.get(renderer);
+			
 			if (NBTHelper.holdingTwo(Minecraft.getMinecraft().thePlayer))
 			{
-				Field fi1 = renderer.getClass().getDeclaredField("modelBipedMain");
-				fi1.setAccessible(true);
-				modelBipedMain = (ModelBiped) fi1.get(renderer);
-
 				Field fi2 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
 				fi2.setAccessible(true);
 				renderManager = (RenderManager) fi2.get(renderer);
@@ -213,9 +214,13 @@ public class ThirdPersonRenderHandler
 					}
 
 					GL11.glPopMatrix();
-					
-					modelBipedMain.bipedLeftArm.showModel = true;
 				}
+			}
+			
+			else
+			{
+				modelBipedMain.bipedLeftArm.showModel = true;
+				modelBipedMain.heldItemLeft = 0;
 			}
 		}
 		catch (Exception e)

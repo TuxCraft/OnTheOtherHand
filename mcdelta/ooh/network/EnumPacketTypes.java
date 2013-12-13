@@ -9,47 +9,56 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 
 public enum EnumPacketTypes
 {
-	SET_HOLDING_TWO(PacketHoldingTwo.class);
+	;
 
-    public Class<? extends PacketOOH> clazz;
+	public Class<? extends PacketOOH>	clazz;
 
-    EnumPacketTypes(Class<? extends PacketOOH> c)
-    {
-        this.clazz = c;
-    }
 
-    public static PacketOOH buildPacket(byte[] data)
-    {
-        ByteArrayInputStream bis = new ByteArrayInputStream(data);
-        int selector = bis.read();
-        DataInputStream dis = new DataInputStream(bis);
 
-        PacketOOH packet = null;
 
-        try
-        {
-            packet = values()[selector].clazz.newInstance();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace(System.err);
-        }
+	EnumPacketTypes (Class<? extends PacketOOH> c)
+	{
+		this.clazz = c;
+	}
 
-        packet.readPopulate(dis);
 
-        return packet;
-    }
 
-    public static Packet populatePacket(PacketOOH packet)
-    {
-        byte[] data = packet.populate();
 
-        Packet250CustomPayload packet250 = new Packet250CustomPayload();
-        packet250.channel = OOH.modid;
-        packet250.data = data;
-        packet250.length = data.length;
-        packet250.isChunkDataPacket = false;
+	public static PacketOOH buildPacket (byte[] data)
+	{
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
+		int selector = bis.read();
+		DataInputStream dis = new DataInputStream(bis);
 
-        return packet250;
-    }
+		PacketOOH packet = null;
+
+		try
+		{
+			packet = values()[selector].clazz.newInstance();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace(System.err);
+		}
+
+		packet.readPopulate(dis);
+
+		return packet;
+	}
+
+
+
+
+	public static Packet populatePacket (PacketOOH packet)
+	{
+		byte[] data = packet.populate();
+
+		Packet250CustomPayload packet250 = new Packet250CustomPayload();
+		packet250.channel = OOH.modid;
+		packet250.data = data;
+		packet250.length = data.length;
+		packet250.isChunkDataPacket = false;
+
+		return packet250;
+	}
 }
