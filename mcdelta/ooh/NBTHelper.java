@@ -72,4 +72,12 @@ public class NBTHelper
 	{
 		return getOOHNBT(player).getBoolean(DUAL_WIELD);
 	}
+
+
+
+
+	public static void setHoldingTwo (EntityPlayer player, boolean bool)
+	{
+		getOOHNBT(player).setBoolean(DUAL_WIELD, bool);
+	}
 }

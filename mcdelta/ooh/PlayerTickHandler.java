@@ -32,7 +32,7 @@ public class PlayerTickHandler implements ITickHandler
 
 			if (NBTHelper.holdingTwo(player) && player.inventory.currentItem != 8)
 			{
-				Assets.p("hi");
+				NBTHelper.setHoldingTwo(player, false);
 			}
 		}
 	}

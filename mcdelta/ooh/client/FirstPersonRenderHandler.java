@@ -60,7 +60,7 @@ public class FirstPersonRenderHandler
 	@ForgeSubscribe
 	public void renderSecondHand (RenderWorldLastEvent event)
 	{
-		if (Assets.isClient())
+		if (Assets.isClient() && NBTHelper.holdingTwo(Minecraft.getMinecraft().thePlayer))
 		{
 			EntityRenderer renderer = Minecraft.getMinecraft().entityRenderer;
 

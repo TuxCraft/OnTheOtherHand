@@ -2,7 +2,9 @@ package mcdelta.ooh;
 
 import java.util.EnumSet;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
 
@@ -30,9 +32,23 @@ public class KeyBindHandler extends KeyHandler
 	@Override
 	public void keyDown (EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat)
 	{
-		if(kb.keyDescription.contains("activateDualWield"))
+		if (kb.keyDescription.contains("activateDualWield"))
 		{
-			
+			if (Assets.isClient())
+			{
+				EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+
+				Assets.p(NBTHelper.holdingTwo(player));
+				
+				if (NBTHelper.holdingTwo(player))
+				{
+					NBTHelper.setHoldingTwo(player, false);
+					return;
+				}
+
+				player.inventory.currentItem = 8;
+				NBTHelper.setHoldingTwo(player, true);
+			}
 		}
 	}
 
