@@ -193,15 +193,13 @@ public class FirstPersonRenderHandler
 	private void renderItemInFirstPerson (ItemRenderer renderer, float partialTicks) throws Exception
 	{
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-		
+
 		Field fi1 = renderer.getClass().getDeclaredField("prevEquippedProgress");
 		fi1.setAccessible(true);
-		fi1.set(renderer, NBTHelper.getNBT(player, NBTHelper.PREV_WEAPON_PROG));
 		prevEquippedProgress = (Float) fi1.get(renderer);
 
 		Field fi2 = renderer.getClass().getDeclaredField("equippedProgress");
 		fi2.setAccessible(true);
-		fi1.set(renderer, NBTHelper.getNBT(player, NBTHelper.WEAPON_PROG));
 		equippedProgress = (Float) fi2.get(renderer);
 
 		float f1 = prevEquippedProgress + (equippedProgress - prevEquippedProgress) * partialTicks;
@@ -452,9 +450,9 @@ public class FirstPersonRenderHandler
 		else if (!entityclientplayermp.isInvisible())
 		{
 			GL11.glPushMatrix();
-			
+
 			GL11.glScalef(-1.0F, 1.0F, 1.0F);
-			
+
 			f12 = 0.8F;
 			f7 = entityclientplayermp.getSwingProgress(partialTicks);
 			f8 = MathHelper.sin(f7 * (float) Math.PI);
@@ -473,9 +471,9 @@ public class FirstPersonRenderHandler
 			GL11.glRotatef(120.0F, 0.0F, 0.0F, 1.0F);
 			GL11.glRotatef(200.0F, 1.0F, 0.0F, 0.0F);
 			GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-			
+
 			GL11.glScalef(1.0F, 1.0F, -1.0F);
-			
+
 			GL11.glTranslatef(5.6F, 0.0F, 0.0F);
 			render = RenderManager.instance.getEntityRenderObject(Minecraft.getMinecraft().thePlayer);
 			renderplayer = (RenderPlayer) render;

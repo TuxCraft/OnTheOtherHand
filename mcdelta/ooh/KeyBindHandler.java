@@ -46,7 +46,6 @@ public class KeyBindHandler extends KeyHandler
 
 				player.inventory.currentItem = 8;
 				NBTHelper.setHoldingTwo(player, true);
-				NBTHelper.setNBT(player, NBTHelper.WEAPON_PROG, 0.1F);
 			}
 		}
 	}

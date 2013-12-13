@@ -9,7 +9,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 
 public enum EnumPacketTypes
 {
-	;
+	UPDATE_OFFHAND (PacketUpdateOffhand.class);
 
 	public Class<? extends PacketOOH>	clazz;
 
