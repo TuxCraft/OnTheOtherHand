@@ -1,6 +1,7 @@
 package mcdelta.ooh;
 
 import mcdelta.ooh.client.FirstPersonRenderHandler;
+import mcdelta.ooh.client.HotbarOverlayHandler;
 import mcdelta.ooh.client.ThirdPersonRenderHandler;
 import mcdelta.ooh.network.PacketHandler;
 import mcdelta.ooh.proxy.CommonProxy;
@@ -40,5 +41,6 @@ public class OOH
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
 		MinecraftForge.EVENT_BUS.register(new FirstPersonRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());
+		MinecraftForge.EVENT_BUS.register(new HotbarOverlayHandler());
 	}
 }

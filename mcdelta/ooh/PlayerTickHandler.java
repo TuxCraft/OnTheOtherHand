@@ -3,8 +3,6 @@ package mcdelta.ooh;
 import java.util.EnumSet;
 
 import mcdelta.ooh.network.EnumPacketTypes;
-import mcdelta.ooh.network.PacketUpdateOffhand;
-import mcdelta.ooh.network.PacketUpdateTwoItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.ITickHandler;
@@ -38,14 +36,12 @@ public class PlayerTickHandler implements ITickHandler
 				{
 					NBTTagCompound tag = new NBTTagCompound();
 					NBTHelper.getOffhandItem(player).writeToNBT(tag);
-					PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketUpdateOffhand(tag)));
 				}
 			}
 
 			if (NBTHelper.holdingTwo(player) && player.inventory.currentItem != 8)
 			{
 				NBTHelper.setHoldingTwo(player, false);
-				PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketUpdateTwoItems(false)));
 			}
 		}
 	}
