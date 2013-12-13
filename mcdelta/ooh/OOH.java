@@ -11,7 +11,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod (modid = OOH.modid, useMetadata = true, version = "0.1")
+@Mod (modid = OOH.modid, useMetadata = true, name = "On the Other Hand", version = "0.1")
 @NetworkMod (clientSideRequired = true, serverSideRequired = false)
 public class OOH
 {
