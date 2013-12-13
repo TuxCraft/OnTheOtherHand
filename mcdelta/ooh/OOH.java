@@ -33,6 +33,7 @@ public class OOH
 	public void load (FMLInitializationEvent event)
 	{
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
+		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
 		MinecraftForge.EVENT_BUS.register(new FirstPersonRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());

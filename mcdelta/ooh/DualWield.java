@@ -1,16 +1,28 @@
 package mcdelta.ooh;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 public class DualWield
 {
-	public static boolean checkForChange(EntityPlayer player)
+	public static boolean checkForChange (EntityPlayer player)
 	{
-		if(NBTHelper.getOffhandItem(player) != player.inventory.getStackInSlot(8))
+		ItemStack stack = NBTHelper.getOffhandItem(player);
+		ItemStack stack2 = player.inventory.getStackInSlot(8);
+
+		if (stack != stack2)
 		{
-			return true;
+			if (stack == null || stack2 == null)
+			{
+				return true;
+			}
+
+			if (stack.itemID != stack2.itemID)
+			{
+				return true;
+			}
 		}
-		
+
 		return false;
 	}
 }

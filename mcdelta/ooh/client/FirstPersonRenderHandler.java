@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import mcdelta.ooh.Assets;
+import mcdelta.ooh.NBTHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -52,7 +53,6 @@ public class FirstPersonRenderHandler
 	private Method	                      getFOVModifier;
 	private Method	                      hurtCameraEffect;
 	private Method	                      setupViewBobbing;
-	private ItemStack	                  itemToRender;
 
 
 
@@ -163,8 +163,6 @@ public class FirstPersonRenderHandler
 				{ partialTicks });
 			}
 
-			//GL11.glTranslatef(-1, 0, 0);
-
 			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && !Minecraft.getMinecraft().renderViewEntity.isPlayerSleeping() && !Minecraft.getMinecraft().gameSettings.hideGUI && !Minecraft.getMinecraft().playerController.enableEverythingIsScrewedUpMode())
 			{
 				renderer.enableLightmap((double) partialTicks);
@@ -202,10 +200,6 @@ public class FirstPersonRenderHandler
 		fi2.setAccessible(true);
 		equippedProgress = (Float) fi2.get(renderer);
 
-		Field fi3 = renderer.getClass().getDeclaredField("itemToRender");
-		fi3.setAccessible(true);
-		itemToRender = (ItemStack) fi3.get(renderer);
-
 		float f1 = prevEquippedProgress + (equippedProgress - prevEquippedProgress) * partialTicks;
 		EntityClientPlayerMP entityclientplayermp = Minecraft.getMinecraft().thePlayer;
 		float f2 = entityclientplayermp.prevRotationPitch + (entityclientplayermp.rotationPitch - entityclientplayermp.prevRotationPitch) * partialTicks;
@@ -219,7 +213,7 @@ public class FirstPersonRenderHandler
 		float f4 = entityplayersp.prevRenderArmYaw + (entityplayersp.renderArmYaw - entityplayersp.prevRenderArmYaw) * partialTicks;
 		GL11.glRotatef((entityclientplayermp.rotationPitch - f3) * 0.1F, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef((entityclientplayermp.rotationYaw - f4) * 0.1F, 0.0F, 1.0F, 0.0F);
-		ItemStack itemstack = itemToRender;
+		ItemStack itemstack = NBTHelper.getOffhandItem(entityclientplayermp);
 		float f5 = Minecraft.getMinecraft().theWorld.getLightBrightness(MathHelper.floor_double(entityclientplayermp.posX), MathHelper.floor_double(entityclientplayermp.posY), MathHelper.floor_double(entityclientplayermp.posZ));
 		f5 = 1.0F;
 		int i = Minecraft.getMinecraft().theWorld.getLightBrightnessForSkyBlocks(MathHelper.floor_double(entityclientplayermp.posX), MathHelper.floor_double(entityclientplayermp.posY), MathHelper.floor_double(entityclientplayermp.posZ), 0);

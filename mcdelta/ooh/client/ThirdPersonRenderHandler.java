@@ -6,6 +6,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import mcdelta.ooh.NBTHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
@@ -33,7 +34,6 @@ public class ThirdPersonRenderHandler
 	private static final ResourceLocation	RES_MAP_BACKGROUND	   = new ResourceLocation("textures/map/map_background.png");
 	private static final ResourceLocation	RES_UNDERWATER_OVERLAY	= new ResourceLocation("textures/misc/underwater.png");
 
-	private RenderBlocks	              renderBlocks	           = new RenderBlocks();
 	private RenderManager	              renderManager;
 	private ModelBiped	                  modelBipedMain;
 	private Method	                      getEntityTexture;
@@ -99,7 +99,7 @@ public class ThirdPersonRenderHandler
 
 			modelBipedMain.bipedLeftArm.showModel = false;
 
-			ItemStack stack = player.inventory.getCurrentItem();
+			ItemStack stack = NBTHelper.getOffhandItem(player);
 
 			if (stack == null)
 			{
