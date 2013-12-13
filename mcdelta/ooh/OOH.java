@@ -1,6 +1,7 @@
 package mcdelta.ooh;
 
-import mcdelta.ooh.client.DualWieldRenderHandler;
+import mcdelta.ooh.client.FirstPersonRenderHandler;
+import mcdelta.ooh.client.ThirdPersonRenderHandler;
 import mcdelta.ooh.proxy.CommonProxy;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
@@ -28,6 +29,7 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
-		MinecraftForge.EVENT_BUS.register(new DualWieldRenderHandler());
+		MinecraftForge.EVENT_BUS.register(new FirstPersonRenderHandler());
+		MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());
 	}
 }
