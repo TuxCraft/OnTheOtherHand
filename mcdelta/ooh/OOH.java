@@ -2,6 +2,7 @@ package mcdelta.ooh;
 
 import mcdelta.ooh.client.FirstPersonRenderHandler;
 import mcdelta.ooh.client.ThirdPersonRenderHandler;
+import mcdelta.ooh.network.PacketHandler;
 import mcdelta.ooh.proxy.CommonProxy;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
@@ -15,7 +16,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod (modid = OOH.modid, useMetadata = true, name = "On the Other Hand", version = "0.1")
-@NetworkMod (clientSideRequired = true, serverSideRequired = false)
+@NetworkMod (clientSideRequired = true, serverSideRequired = false, channels = { OOH.modid }, packetHandler = PacketHandler.class)
 public class OOH
 {
 	@Instance (OOH.modid)
