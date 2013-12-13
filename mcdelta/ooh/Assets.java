@@ -16,4 +16,12 @@ public class Assets
 	{
 		return FMLCommonHandler.instance().getEffectiveSide().isServer();
 	}
+
+
+
+
+	public static void p (Object message)
+	{
+		System.out.println(message);
+	}
 }
