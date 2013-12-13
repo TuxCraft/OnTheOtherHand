@@ -42,12 +42,13 @@ public class ThirdPersonRenderHandler
 	private RenderBlocks	              renderBlocks	           = new RenderBlocks();
 	private RenderManager	              renderManager;
 	private ModelBiped	                  modelBipedMain;
+	private ModelRenderer	              arm;
 
 
 
 
 	@ForgeSubscribe
-	public void renderSecondHand (RenderPlayerEvent.Specials.Post event)
+	public void renderSecondHand (RenderPlayerEvent.Pre event)
 	{
 		try
 		{
@@ -58,11 +59,11 @@ public class ThirdPersonRenderHandler
 			fi1.setAccessible(true);
 			modelBipedMain = (ModelBiped) fi1.get(renderer);
 
-			Field fi2 = renderer.getClass().getDeclaredField("renderManager");
+			Field fi2 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
 			fi2.setAccessible(true);
 			renderManager = (RenderManager) fi2.get(renderer);
 
-			ModelRenderer arm = new ModelRenderer(modelBipedMain, 40, 16);
+			arm = new ModelRenderer(modelBipedMain, 40, 16);
 			arm.mirror = true;
 			arm.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.0F);
 			arm.setRotationPoint(5.0F, 2.0F + 0.0F, 0.0F);
@@ -93,118 +94,129 @@ public class ThirdPersonRenderHandler
 
 			arm.render(0.0625F);
 
-			modelBipedMain.bipedLeftArm.showModel = false;
-
-			ItemStack stack = player.inventory.getCurrentItem();
-
-			if (stack != null)
-			{
-				GL11.glPushMatrix();
-				this.modelBipedMain.bipedRightArm.postRender(0.0625F);
-				GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
-
-				if (player.fishEntity != null)
-				{
-					stack = new ItemStack(Item.stick);
-				}
-
-				EnumAction enumaction = null;
-
-				if (player.getItemInUseCount() > 0)
-				{
-					enumaction = stack.getItemUseAction();
-				}
-
-				float f11;
-
-				IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(stack, EQUIPPED);
-				boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, stack, BLOCK_3D));
-				boolean isBlock = stack.itemID < Block.blocksList.length && stack.getItemSpriteNumber() == 0;
-
-				if (is3D || (isBlock && RenderBlocks.renderItemIn3d(Block.blocksList[stack.itemID].getRenderType())))
-				{
-					f11 = 0.5F;
-					GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
-					f11 *= 0.75F;
-					GL11.glRotatef(20.0F, 1.0F, 0.0F, 0.0F);
-					GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-					GL11.glScalef(-f11, -f11, f11);
-				}
-				else if (stack.itemID == Item.bow.itemID)
-				{
-					f11 = 0.625F;
-					GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
-					GL11.glRotatef(-20.0F, 0.0F, 1.0F, 0.0F);
-					GL11.glScalef(f11, -f11, f11);
-					GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
-					GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-				}
-				else if (Item.itemsList[stack.itemID].isFull3D())
-				{
-					f11 = 0.625F;
-
-					if (Item.itemsList[stack.itemID].shouldRotateAroundWhenRendering())
-					{
-						GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-						GL11.glTranslatef(0.0F, -0.125F, 0.0F);
-					}
-
-					if (player.getItemInUseCount() > 0 && enumaction == EnumAction.block)
-					{
-						GL11.glTranslatef(0.05F, 0.0F, -0.1F);
-						GL11.glRotatef(-50.0F, 0.0F, 1.0F, 0.0F);
-						GL11.glRotatef(-10.0F, 1.0F, 0.0F, 0.0F);
-						GL11.glRotatef(-60.0F, 0.0F, 0.0F, 1.0F);
-					}
-
-					GL11.glTranslatef(0.0F, 0.1875F, 0.0F);
-					GL11.glScalef(f11, -f11, f11);
-					GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
-					GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-				}
-				else
-				{
-					f11 = 0.375F;
-					GL11.glTranslatef(0.25F, 0.1875F, -0.1875F);
-					GL11.glScalef(f11, f11, f11);
-					GL11.glRotatef(60.0F, 0.0F, 0.0F, 1.0F);
-					GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
-					GL11.glRotatef(20.0F, 0.0F, 0.0F, 1.0F);
-				}
-
-				float f12;
-				float f13;
-				int j;
-
-				if (stack.getItem().requiresMultipleRenderPasses())
-				{
-					for (j = 0; j < stack.getItem().getRenderPasses(stack.getItemDamage()); ++j)
-					{
-						int k = stack.getItem().getColorFromItemStack(stack, j);
-						f13 = (float) (k >> 16 & 255) / 255.0F;
-						f12 = (float) (k >> 8 & 255) / 255.0F;
-						float f6 = (float) (k & 255) / 255.0F;
-						GL11.glColor4f(f13, f12, f6, 1.0F);
-						renderManager.itemRenderer.renderItem(player, stack, j);
-					}
-				}
-				else
-				{
-					j = stack.getItem().getColorFromItemStack(stack, 0);
-					float f14 = (float) (j >> 16 & 255) / 255.0F;
-					f13 = (float) (j >> 8 & 255) / 255.0F;
-					f12 = (float) (j & 255) / 255.0F;
-					GL11.glColor4f(f14, f13, f12, 1.0F);
-					renderManager.itemRenderer.renderItem(player, stack, 0);
-				}
-
-				GL11.glPopMatrix();
-			}
+			modelBipedMain.bipedLeftArm.showModel = true;
+			modelBipedMain.bipedLeftArm.rotateAngleX = arm.rotateAngleX;
+			modelBipedMain.bipedLeftArm.rotateAngleY = arm.rotateAngleY;
+			modelBipedMain.bipedLeftArm.rotateAngleZ = arm.rotateAngleZ;
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+	}
+
+
+
+
+	@ForgeSubscribe
+	public void renderSecondHandItem (RenderPlayerEvent.Specials.Post event)
+	{
+		/**EntityPlayer player = event.entityPlayer;
+		ItemStack stack = player.inventory.getCurrentItem();
+
+		if (stack != null)
+		{
+			GL11.glPushMatrix();
+			arm.postRender(0.0625F);
+			GL11.glTranslatef(-0.0625F, 0.4375F, 0.0625F);
+
+			if (player.fishEntity != null)
+			{
+				stack = new ItemStack(Item.stick);
+			}
+
+			EnumAction enumaction = null;
+
+			if (player.getItemInUseCount() > 0)
+			{
+				enumaction = stack.getItemUseAction();
+			}
+
+			float f11;
+
+			IItemRenderer customRenderer = MinecraftForgeClient.getItemRenderer(stack, EQUIPPED);
+			boolean is3D = (customRenderer != null && customRenderer.shouldUseRenderHelper(EQUIPPED, stack, BLOCK_3D));
+			boolean isBlock = stack.itemID < Block.blocksList.length && stack.getItemSpriteNumber() == 0;
+
+			if (is3D || (isBlock && RenderBlocks.renderItemIn3d(Block.blocksList[stack.itemID].getRenderType())))
+			{
+				f11 = 0.5F;
+				GL11.glTranslatef(0.0F, 0.1875F, -0.3125F);
+				f11 *= 0.75F;
+				GL11.glRotatef(20.0F, 1.0F, 0.0F, 0.0F);
+				GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
+				GL11.glScalef(-f11, -f11, f11);
+			}
+			else if (stack.itemID == Item.bow.itemID)
+			{
+				f11 = 0.625F;
+				GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
+				GL11.glRotatef(-20.0F, 0.0F, 1.0F, 0.0F);
+				GL11.glScalef(f11, -f11, f11);
+				GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
+				GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
+			}
+			else if (Item.itemsList[stack.itemID].isFull3D())
+			{
+				f11 = 0.625F;
+
+				if (Item.itemsList[stack.itemID].shouldRotateAroundWhenRendering())
+				{
+					GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+					GL11.glTranslatef(0.0F, -0.125F, 0.0F);
+				}
+
+				if (player.getItemInUseCount() > 0 && enumaction == EnumAction.block)
+				{
+					GL11.glTranslatef(0.05F, 0.0F, -0.1F);
+					GL11.glRotatef(-50.0F, 0.0F, 1.0F, 0.0F);
+					GL11.glRotatef(-10.0F, 1.0F, 0.0F, 0.0F);
+					GL11.glRotatef(-60.0F, 0.0F, 0.0F, 1.0F);
+				}
+
+				GL11.glTranslatef(0.0F, 0.1875F, 0.0F);
+				GL11.glScalef(f11, -f11, f11);
+				GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
+				GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
+			}
+			else
+			{
+				f11 = 0.375F;
+				GL11.glTranslatef(0.25F, 0.1875F, -0.1875F);
+				GL11.glScalef(f11, f11, f11);
+				GL11.glRotatef(60.0F, 0.0F, 0.0F, 1.0F);
+				GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
+				GL11.glRotatef(20.0F, 0.0F, 0.0F, 1.0F);
+			}
+
+			float f12;
+			float f13;
+			int j;
+
+			if (stack.getItem().requiresMultipleRenderPasses())
+			{
+				for (j = 0; j < stack.getItem().getRenderPasses(stack.getItemDamage()); ++j)
+				{
+					int k = stack.getItem().getColorFromItemStack(stack, j);
+					f13 = (float) (k >> 16 & 255) / 255.0F;
+					f12 = (float) (k >> 8 & 255) / 255.0F;
+					float f6 = (float) (k & 255) / 255.0F;
+					GL11.glColor4f(f13, f12, f6, 1.0F);
+					renderManager.itemRenderer.renderItem(player, stack, j);
+				}
+			}
+			else
+			{
+				j = stack.getItem().getColorFromItemStack(stack, 0);
+				float f14 = (float) (j >> 16 & 255) / 255.0F;
+				f13 = (float) (j >> 8 & 255) / 255.0F;
+				f12 = (float) (j & 255) / 255.0F;
+				GL11.glColor4f(f14, f13, f12, 1.0F);
+				renderManager.itemRenderer.renderItem(player, stack, 0);
+			}
+
+			GL11.glPopMatrix();
+		}*/
 	}
 
 
