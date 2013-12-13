@@ -1,5 +1,7 @@
 package mcdelta.ooh.client;
 
+import static net.minecraftforge.client.IItemRenderer.ItemRenderType.FIRST_PERSON_MAP;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -16,6 +18,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemMap;
@@ -32,9 +35,6 @@ import net.minecraftforge.event.ForgeSubscribe;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.glu.Project;
-
-import static net.minecraftforge.client.IItemRenderer.ItemRenderType.*;
-import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.*;
 
 public class FirstPersonRenderHandler
 {
@@ -192,12 +192,16 @@ public class FirstPersonRenderHandler
 
 	private void renderItemInFirstPerson (ItemRenderer renderer, float partialTicks) throws Exception
 	{
+		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		
 		Field fi1 = renderer.getClass().getDeclaredField("prevEquippedProgress");
 		fi1.setAccessible(true);
+		fi1.set(renderer, NBTHelper.getNBT(player, NBTHelper.PREV_WEAPON_PROG));
 		prevEquippedProgress = (Float) fi1.get(renderer);
 
 		Field fi2 = renderer.getClass().getDeclaredField("equippedProgress");
 		fi2.setAccessible(true);
+		fi1.set(renderer, NBTHelper.getNBT(player, NBTHelper.WEAPON_PROG));
 		equippedProgress = (Float) fi2.get(renderer);
 
 		float f1 = prevEquippedProgress + (equippedProgress - prevEquippedProgress) * partialTicks;
