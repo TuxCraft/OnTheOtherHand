@@ -21,13 +21,18 @@ public class PlayerTickHandler implements ITickHandler
 	@Override
 	public void tickEnd (EnumSet<TickType> type, Object... tickData)
 	{
-		if(type.contains(TickType.PLAYER))
+		if (type.contains(TickType.PLAYER))
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
-			
-			if(DualWield.checkForChange(player))
+
+			if (DualWield.checkForChange(player))
 			{
 				NBTHelper.refresh(player);
+			}
+
+			if (NBTHelper.holdingTwo(player) && player.inventory.currentItem != 8)
+			{
+				Assets.p("hi");
 			}
 		}
 	}

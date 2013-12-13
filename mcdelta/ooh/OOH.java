@@ -32,6 +32,8 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
+		proxy.registerKeyBinds();
+		
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
 		GameRegistry.registerPlayerTracker(new PlayerTracker());

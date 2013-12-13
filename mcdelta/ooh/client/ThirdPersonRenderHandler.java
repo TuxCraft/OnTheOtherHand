@@ -43,7 +43,7 @@ public class ThirdPersonRenderHandler
 
 
 	@ForgeSubscribe
-	public void renderSecondHand (RenderPlayerEvent.Specials.Post event)
+	public void renderSecondHand (RenderPlayerEvent.Specials.Pre event)
 	{
 		try
 		{

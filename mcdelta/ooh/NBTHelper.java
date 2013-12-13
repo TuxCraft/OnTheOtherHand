@@ -39,7 +39,7 @@ public class NBTHelper
 
 	public static void refresh (NBTTagCompound compound, EntityPlayer player)
 	{
-		ItemStack stack = player.inventory.getStackInSlot(8);
+		ItemStack stack = player.inventory.getStackInSlot(0);
 		compound.setCompoundTag(OFFHAND_WEAPON, stack == null ? new NBTTagCompound() : stack.writeToNBT(new NBTTagCompound()));
 
 		Assets.p(stack + " " + compound);
@@ -63,5 +63,13 @@ public class NBTHelper
 			stack.readFromNBT(compound);
 			return stack;
 		}
+	}
+
+
+
+
+	public static boolean holdingTwo (EntityPlayer player)
+	{
+		return getOOHNBT(player).getBoolean(DUAL_WIELD);
 	}
 }

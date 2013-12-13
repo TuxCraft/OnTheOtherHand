@@ -8,7 +8,7 @@ public class DualWield
 	public static boolean checkForChange (EntityPlayer player)
 	{
 		ItemStack stack = NBTHelper.getOffhandItem(player);
-		ItemStack stack2 = player.inventory.getStackInSlot(8);
+		ItemStack stack2 = player.inventory.getStackInSlot(0);
 
 		if (stack != stack2)
 		{
