@@ -4,11 +4,12 @@ import java.util.EnumSet;
 
 import mcdelta.ooh.network.EnumPacketTypes;
 import mcdelta.ooh.network.PacketUpdateOffhand;
+import mcdelta.ooh.network.PacketUpdateTwoItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class PlayerTickHandler implements ITickHandler
 {
@@ -32,14 +33,19 @@ public class PlayerTickHandler implements ITickHandler
 			if (DualWield.checkForChange(player))
 			{
 				NBTHelper.refresh(player);
-				NBTTagCompound tag = new NBTTagCompound();
-				NBTHelper.getOffhandItem(player).writeToNBT(tag);
-				((WorldServer) player.worldObj).getEntityTracker().sendPacketToAllPlayersTrackingEntity(player, EnumPacketTypes.populatePacket(new PacketUpdateOffhand(tag)));
+
+				if (Assets.isServer())
+				{
+					NBTTagCompound tag = new NBTTagCompound();
+					NBTHelper.getOffhandItem(player).writeToNBT(tag);
+					PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketUpdateOffhand(tag)));
+				}
 			}
 
 			if (NBTHelper.holdingTwo(player) && player.inventory.currentItem != 8)
 			{
 				NBTHelper.setHoldingTwo(player, false);
+				PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketUpdateTwoItems(false)));
 			}
 		}
 	}

@@ -10,25 +10,25 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import cpw.mods.fml.common.network.Player;
 
-public class PacketUpdateOffhand extends PacketOOH
+public class PacketUpdateTwoItems extends PacketOOH
 {
-	private NBTTagCompound	data;
+	private boolean	data;
 
 
 
 
-	public PacketUpdateOffhand ( )
+	public PacketUpdateTwoItems ( )
 	{
-		super(EnumPacketTypes.UPDATE_OFFHAND);
+		super(EnumPacketTypes.UPDATE_TWOITEMS);
 	}
 
 
 
 
-	public PacketUpdateOffhand (NBTTagCompound nbt)
+	public PacketUpdateTwoItems (boolean b)
 	{
-		super(EnumPacketTypes.UPDATE_OFFHAND);
-		this.data = nbt;
+		super(EnumPacketTypes.UPDATE_TWOITEMS);
+		this.data = b;
 	}
 
 
@@ -37,7 +37,7 @@ public class PacketUpdateOffhand extends PacketOOH
 	@Override
 	public void writeData (DataOutputStream dataStream) throws IOException
 	{
-		writeNBTTagCompound(data, dataStream);
+		dataStream.writeBoolean(data);
 	}
 
 
@@ -46,7 +46,7 @@ public class PacketUpdateOffhand extends PacketOOH
 	@Override
 	public void readData (DataInputStream dataStream) throws IOException
 	{
-		data = readNBTTagCompound(dataStream);
+		data = dataStream.readBoolean();
 	}
 
 
@@ -57,6 +57,6 @@ public class PacketUpdateOffhand extends PacketOOH
 	{
 		EntityPlayer player = (EntityPlayer) playerParam;
 
-		NBTHelper.setNBT(player, NBTHelper.OFFHAND_WEAPON, data);
+		NBTHelper.setHoldingTwo(player, data);
 	}
 }

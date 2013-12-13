@@ -2,11 +2,14 @@ package mcdelta.ooh;
 
 import java.util.EnumSet;
 
+import mcdelta.ooh.network.EnumPacketTypes;
+import mcdelta.ooh.network.PacketUpdateTwoItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class KeyBindHandler extends KeyHandler
 {
@@ -41,11 +44,13 @@ public class KeyBindHandler extends KeyHandler
 				if (NBTHelper.holdingTwo(player))
 				{
 					NBTHelper.setHoldingTwo(player, false);
+					PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketUpdateTwoItems(false)));
 					return;
 				}
 
 				player.inventory.currentItem = 8;
 				NBTHelper.setHoldingTwo(player, true);
+				PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketUpdateTwoItems(true)));
 			}
 		}
 	}

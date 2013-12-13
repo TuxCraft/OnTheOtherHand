@@ -1,8 +1,12 @@
 package mcdelta.ooh;
 
+import mcdelta.ooh.network.EnumPacketTypes;
+import mcdelta.ooh.network.PacketUpdateOffhand;
+import mcdelta.ooh.network.PacketUpdateTwoItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class NBTHelper
 {
@@ -42,6 +46,8 @@ public class NBTHelper
 		ItemStack stack = player.inventory.getStackInSlot(0);
 		compound.setCompoundTag(OFFHAND_WEAPON, stack == null ? new NBTTagCompound() : stack.writeToNBT(new NBTTagCompound()));
 
+		PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketUpdateOffhand(compound.getCompoundTag(OFFHAND_WEAPON))));
+		
 		Assets.p(stack + " " + compound);
 	}
 

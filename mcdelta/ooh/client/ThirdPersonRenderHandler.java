@@ -6,6 +6,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import mcdelta.ooh.Assets;
 import mcdelta.ooh.NBTHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -51,12 +52,11 @@ public class ThirdPersonRenderHandler
 			EntityPlayer player = event.entityPlayer;
 			RenderPlayer renderer = event.renderer;
 
-			
 			Field fi1 = renderer.getClass().getDeclaredField("modelBipedMain");
 			fi1.setAccessible(true);
 			modelBipedMain = (ModelBiped) fi1.get(renderer);
-			
-			if (NBTHelper.holdingTwo(Minecraft.getMinecraft().thePlayer))
+
+			if (NBTHelper.holdingTwo(event.entityPlayer))
 			{
 				Field fi2 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
 				fi2.setAccessible(true);
@@ -104,6 +104,11 @@ public class ThirdPersonRenderHandler
 				modelBipedMain.bipedLeftArm.showModel = false;
 
 				ItemStack stack = NBTHelper.getOffhandItem(player);
+
+				if (Minecraft.getMinecraft().thePlayer.username != player.username)
+				{
+					//Assets.p(stack);
+				}
 
 				if (stack == null)
 				{
@@ -216,7 +221,7 @@ public class ThirdPersonRenderHandler
 					GL11.glPopMatrix();
 				}
 			}
-			
+
 			else
 			{
 				modelBipedMain.bipedLeftArm.showModel = true;
