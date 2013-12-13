@@ -66,43 +66,40 @@ public class DualWieldRenderHandler
 
 			try
 			{
-				if (getFOVModifier == null)
-				{
-					Field fi1 = renderer.getClass().getDeclaredField("cameraZoom");
-					fi1.setAccessible(true);
-					cameraZoom = (Double) fi1.get(renderer);
+				Field fi1 = renderer.getClass().getDeclaredField("cameraZoom");
+				fi1.setAccessible(true);
+				cameraZoom = (Double) fi1.get(renderer);
 
-					Field fi2 = renderer.getClass().getDeclaredField("debugViewDirection");
-					fi2.setAccessible(true);
-					debugViewDirection = (Integer) fi2.get(renderer);
+				Field fi2 = renderer.getClass().getDeclaredField("debugViewDirection");
+				fi2.setAccessible(true);
+				debugViewDirection = (Integer) fi2.get(renderer);
 
-					Field fi3 = renderer.getClass().getDeclaredField("cameraYaw");
-					fi3.setAccessible(true);
-					cameraYaw = (Double) fi3.get(renderer);
+				Field fi3 = renderer.getClass().getDeclaredField("cameraYaw");
+				fi3.setAccessible(true);
+				cameraYaw = (Double) fi3.get(renderer);
 
-					Field fi4 = renderer.getClass().getDeclaredField("cameraPitch");
-					fi4.setAccessible(true);
-					cameraPitch = (Double) fi4.get(renderer);
+				Field fi4 = renderer.getClass().getDeclaredField("cameraPitch");
+				fi4.setAccessible(true);
+				cameraPitch = (Double) fi4.get(renderer);
 
-					Field fi5 = renderer.getClass().getDeclaredField("farPlaneDistance");
-					fi5.setAccessible(true);
-					farPlaneDistance = (Float) fi5.get(renderer);
+				Field fi5 = renderer.getClass().getDeclaredField("farPlaneDistance");
+				fi5.setAccessible(true);
+				farPlaneDistance = (Float) fi5.get(renderer);
 
-					Class[] param1 = new Class[]
-					{ Float.TYPE, Boolean.TYPE };
-					getFOVModifier = renderer.getClass().getDeclaredMethod("getFOVModifier", param1);
-					getFOVModifier.setAccessible(true);
+				Class[] param1 = new Class[]
+				{ Float.TYPE, Boolean.TYPE };
+				getFOVModifier = renderer.getClass().getDeclaredMethod("getFOVModifier", param1);
+				getFOVModifier.setAccessible(true);
 
-					Class[] param2 = new Class[]
-					{ Float.TYPE };
-					hurtCameraEffect = renderer.getClass().getDeclaredMethod("hurtCameraEffect", param2);
-					hurtCameraEffect.setAccessible(true);
+				Class[] param2 = new Class[]
+				{ Float.TYPE };
+				hurtCameraEffect = renderer.getClass().getDeclaredMethod("hurtCameraEffect", param2);
+				hurtCameraEffect.setAccessible(true);
 
-					Class[] param3 = new Class[]
-					{ Float.TYPE };
-					setupViewBobbing = renderer.getClass().getDeclaredMethod("setupViewBobbing", param2);
-					setupViewBobbing.setAccessible(true);
-				}
+				Class[] param3 = new Class[]
+				{ Float.TYPE };
+				setupViewBobbing = renderer.getClass().getDeclaredMethod("setupViewBobbing", param2);
+				setupViewBobbing.setAccessible(true);
 
 				if (cameraZoom == 1.0D)
 				{
@@ -166,7 +163,7 @@ public class DualWieldRenderHandler
 				{ partialTicks });
 			}
 
-			GL11.glTranslated(-1, 0, 0);
+			//GL11.glTranslatef(-1, 0, 0);
 
 			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && !Minecraft.getMinecraft().renderViewEntity.isPlayerSleeping() && !Minecraft.getMinecraft().gameSettings.hideGUI && !Minecraft.getMinecraft().playerController.enableEverythingIsScrewedUpMode())
 			{
@@ -197,20 +194,17 @@ public class DualWieldRenderHandler
 
 	private void renderItemInFirstPerson (ItemRenderer renderer, float partialTicks) throws Exception
 	{
-		if (itemToRender == null)
-		{
-			Field fi1 = renderer.getClass().getDeclaredField("prevEquippedProgress");
-			fi1.setAccessible(true);
-			prevEquippedProgress = (Float) fi1.get(renderer);
+		Field fi1 = renderer.getClass().getDeclaredField("prevEquippedProgress");
+		fi1.setAccessible(true);
+		prevEquippedProgress = (Float) fi1.get(renderer);
 
-			Field fi2 = renderer.getClass().getDeclaredField("equippedProgress");
-			fi2.setAccessible(true);
-			equippedProgress = (Float) fi2.get(renderer);
+		Field fi2 = renderer.getClass().getDeclaredField("equippedProgress");
+		fi2.setAccessible(true);
+		equippedProgress = (Float) fi2.get(renderer);
 
-			Field fi3 = renderer.getClass().getDeclaredField("equippedProgress");
-			fi3.setAccessible(true);
-			itemToRender = (ItemStack) fi3.get(renderer);
-		}
+		Field fi3 = renderer.getClass().getDeclaredField("itemToRender");
+		fi3.setAccessible(true);
+		itemToRender = (ItemStack) fi3.get(renderer);
 
 		float f1 = prevEquippedProgress + (equippedProgress - prevEquippedProgress) * partialTicks;
 		EntityClientPlayerMP entityclientplayermp = Minecraft.getMinecraft().thePlayer;
@@ -372,18 +366,18 @@ public class DualWieldRenderHandler
 				f7 = entityclientplayermp.getSwingProgress(partialTicks);
 				f8 = MathHelper.sin(f7 * (float) Math.PI);
 				f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
-				GL11.glTranslatef(-f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
+				GL11.glTranslatef(f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
 			}
 
-			GL11.glTranslatef(0.7F * f12, -0.65F * f12 - (1.0F - f1) * 0.6F, -0.9F * f12);
+			GL11.glTranslatef(-0.7F * f12, -0.65F * f12 - (1.0F - f1) * 0.6F, -0.9F * f12);
 			GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			f7 = entityclientplayermp.getSwingProgress(partialTicks);
 			f8 = MathHelper.sin(f7 * f7 * (float) Math.PI);
 			f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 			GL11.glRotatef(-f8 * 20.0F, 0.0F, 1.0F, 0.0F);
-			GL11.glRotatef(-f6 * 20.0F, 0.0F, 0.0F, 1.0F);
-			GL11.glRotatef(-f6 * 80.0F, 1.0F, 0.0F, 0.0F);
+			GL11.glRotatef(f6 * 20.0F, 0.0F, 0.0F, 1.0F);
+			GL11.glRotatef(f6 * 80.0F, 1.0F, 0.0F, 0.0F);
 			f9 = 0.4F;
 			GL11.glScalef(f9, f9, f9);
 			float f13;
