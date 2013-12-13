@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class NBTHelper
 {
 	public static final String	OOH_COMPOUND_KEY	= "OOHData";
+	public static final String	DUAL_WIELD	     = "DualWield";
 
 
 
