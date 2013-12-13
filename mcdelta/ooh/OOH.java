@@ -11,6 +11,8 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod (modid = OOH.modid, useMetadata = true, name = "On the Other Hand", version = "0.1")
 @NetworkMod (clientSideRequired = true, serverSideRequired = false)
@@ -30,6 +32,7 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
+		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
 		MinecraftForge.EVENT_BUS.register(new FirstPersonRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());

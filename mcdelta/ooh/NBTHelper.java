@@ -41,7 +41,27 @@ public class NBTHelper
 	{
 		ItemStack stack = player.inventory.getStackInSlot(8);
 		compound.setCompoundTag(OFFHAND_WEAPON, stack == null ? new NBTTagCompound() : stack.writeToNBT(new NBTTagCompound()));
-		
-		Assets.p(stack);
+
+		Assets.p(stack + " " + compound);
+	}
+
+
+
+
+	public static ItemStack getOffhandItem (EntityPlayer player)
+	{
+		ItemStack stack = new ItemStack(0, 0, 0);
+		NBTTagCompound compound = getOOHNBT(player).getCompoundTag(OFFHAND_WEAPON);
+
+		if (compound.hasNoTags())
+		{
+			return null;
+		}
+
+		else
+		{
+			stack.readFromNBT(compound);
+			return stack;
+		}
 	}
 }
