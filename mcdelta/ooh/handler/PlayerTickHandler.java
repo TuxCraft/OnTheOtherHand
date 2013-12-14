@@ -79,7 +79,7 @@ public class PlayerTickHandler implements ITickHandler
 							data.secondItem = player.inventory.getStackInSlot(8);
 							data.startSwing = false;
 							OOHData.setOOHData(player, data);
-							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
+							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, data)));
 
 							return;
 						}
