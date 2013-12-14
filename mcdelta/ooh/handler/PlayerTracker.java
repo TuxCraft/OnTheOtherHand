@@ -4,7 +4,7 @@ import mcdelta.ooh.OOHData;
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.IPlayerTracker;
 
-import static mcdelta.ooh.OOH.log;
+import static mcdelta.ooh.OOH.*;
 
 public class PlayerTracker implements IPlayerTracker
 {
@@ -16,8 +16,6 @@ public class PlayerTracker implements IPlayerTracker
 		{
 			log("Adding OOH data to " + player.username);
 			OOHData.setOOHData(player, new OOHData(true, player.inventory.getStackInSlot(8)));
-			
-			log(player.inventory.getStackInSlot(8));
 		}
 	}
 

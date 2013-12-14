@@ -81,4 +81,13 @@ public class OOHData
 	{
 		player.getEntityData().setCompoundTag("OOHData", data.writeToNBT(new NBTTagCompound()));
 	}
+
+
+
+
+	@Override
+	public String toString ()
+	{
+		return "OOHData[ doubleEngaged:" + doubleEngaged + ", secondItem:" + secondItem + "]";
+	}
 }
