@@ -397,6 +397,8 @@ public class ThirdPersonRenderHandler
 
 				GL11.glPopMatrix();
 			}
+			
+			modelBipedMain.bipedRightArm.showModel = true;
 		}
 		else
 		{

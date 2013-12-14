@@ -1,15 +1,18 @@
 package mcdelta.ooh.client;
 
+import static mcdelta.ooh.OOH.*;
+
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.FIRST_PERSON_MAP;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import mcdelta.ooh.Assets;
-import mcdelta.ooh.NBTHelper;
+import mcdelta.ooh.OOHData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -60,7 +63,10 @@ public class FirstPersonRenderHandler
 	@ForgeSubscribe
 	public void renderSecondHand (RenderWorldLastEvent event)
 	{
-		if (Assets.isClient() && NBTHelper.holdingTwo(Minecraft.getMinecraft().thePlayer))
+		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		OOHData data = OOHData.getOOHData(player);
+		
+		if (isClient() && data.doubleEngaged)
 		{
 			EntityRenderer renderer = Minecraft.getMinecraft().entityRenderer;
 
@@ -193,7 +199,8 @@ public class FirstPersonRenderHandler
 	private void renderItemInFirstPerson (ItemRenderer renderer, float partialTicks) throws Exception
 	{
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-
+		OOHData data = OOHData.getOOHData(player);
+		
 		Field fi1 = renderer.getClass().getDeclaredField("prevEquippedProgress");
 		fi1.setAccessible(true);
 		prevEquippedProgress = (Float) fi1.get(renderer);
@@ -215,7 +222,7 @@ public class FirstPersonRenderHandler
 		float f4 = entityplayersp.prevRenderArmYaw + (entityplayersp.renderArmYaw - entityplayersp.prevRenderArmYaw) * partialTicks;
 		GL11.glRotatef((entityclientplayermp.rotationPitch - f3) * 0.1F, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef((entityclientplayermp.rotationYaw - f4) * 0.1F, 0.0F, 1.0F, 0.0F);
-		ItemStack itemstack = NBTHelper.getOffhandItem(entityclientplayermp);
+		ItemStack itemstack = data.secondItem;
 		float f5 = Minecraft.getMinecraft().theWorld.getLightBrightness(MathHelper.floor_double(entityclientplayermp.posX), MathHelper.floor_double(entityclientplayermp.posY), MathHelper.floor_double(entityclientplayermp.posZ));
 		f5 = 1.0F;
 		int i = Minecraft.getMinecraft().theWorld.getLightBrightnessForSkyBlocks(MathHelper.floor_double(entityclientplayermp.posX), MathHelper.floor_double(entityclientplayermp.posY), MathHelper.floor_double(entityclientplayermp.posZ), 0);
@@ -251,7 +258,7 @@ public class FirstPersonRenderHandler
 		{
 			GL11.glPushMatrix();
 			f12 = 0.8F;
-			f7 = entityclientplayermp.getSwingProgress(partialTicks);
+			f7 = data.getSwingProgress(partialTicks);
 			f8 = MathHelper.sin(f7 * (float) Math.PI);
 			f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 			GL11.glTranslatef(-f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
@@ -291,7 +298,7 @@ public class FirstPersonRenderHandler
 				GL11.glPopMatrix();
 			}
 
-			f8 = entityclientplayermp.getSwingProgress(partialTicks);
+			f8 = data.getSwingProgress(partialTicks);
 			f6 = MathHelper.sin(f8 * f8 * (float) Math.PI);
 			f9 = MathHelper.sin(MathHelper.sqrt_float(f8) * (float) Math.PI);
 			GL11.glRotatef(-f6 * 20.0F, 0.0F, 1.0F, 0.0F);
@@ -359,7 +366,7 @@ public class FirstPersonRenderHandler
 			}
 			else
 			{
-				f7 = entityclientplayermp.getSwingProgress(partialTicks);
+				f7 = data.getSwingProgress(partialTicks);
 				f8 = MathHelper.sin(f7 * (float) Math.PI);
 				f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 				GL11.glTranslatef(f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
@@ -368,7 +375,7 @@ public class FirstPersonRenderHandler
 			GL11.glTranslatef(-0.7F * f12, -0.65F * f12 - (1.0F - f1) * 0.6F, -0.9F * f12);
 			GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-			f7 = entityclientplayermp.getSwingProgress(partialTicks);
+			f7 = data.getSwingProgress(partialTicks);
 			f8 = MathHelper.sin(f7 * f7 * (float) Math.PI);
 			f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 			GL11.glRotatef(-f8 * 20.0F, 0.0F, 1.0F, 0.0F);
@@ -454,14 +461,14 @@ public class FirstPersonRenderHandler
 			GL11.glScalef(-1.0F, 1.0F, 1.0F);
 
 			f12 = 0.8F;
-			f7 = entityclientplayermp.getSwingProgress(partialTicks);
+			f7 = data.getSwingProgress(partialTicks);
 			f8 = MathHelper.sin(f7 * (float) Math.PI);
 			f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 			GL11.glTranslatef(-f6 * 0.3F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.4F, -f8 * 0.4F);
 			GL11.glTranslatef(0.8F * f12, -0.75F * f12 - (1.0F - f1) * 0.6F, -0.9F * f12);
 			GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-			f7 = entityclientplayermp.getSwingProgress(partialTicks);
+			f7 = data.getSwingProgress(partialTicks);
 			f8 = MathHelper.sin(f7 * f7 * (float) Math.PI);
 			f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 			GL11.glRotatef(f6 * 70.0F, 0.0F, 1.0F, 0.0F);
