@@ -7,6 +7,7 @@ import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
+import mcdelta.ooh.network.PacketActivateItem;
 import mcdelta.ooh.network.PacketSetData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
@@ -200,22 +201,14 @@ public class PlayerTickHandler implements ITickHandler
 	{
 		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
 
-		//if (target == null)
-		//{
-			if (Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, (int) player.posX, (int) player.posY, (int) player.posZ, 0, target.hitVec))
-			{
-				if (stack.stackSize == 0)
-				{
-					stack = null;
-				}
-
-				return true;
-			}
+		if (target == null)
+		{
+			PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketActivateItem(player, stack)));
 			
 			return true;
-		//}
+		}
 
-		/**if (stack == null)
+		if (stack == null)
 		{
 			if (target.typeOfHit == EnumMovingObjectType.TILE)
 			{
@@ -260,7 +253,7 @@ public class PlayerTickHandler implements ITickHandler
 			}
 		}
 
-		return false;*/
+		return false;
 	}
 
 

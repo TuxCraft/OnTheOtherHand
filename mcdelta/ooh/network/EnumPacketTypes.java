@@ -1,6 +1,6 @@
 package mcdelta.ooh.network;
 
-import static mcdelta.ooh.OOH.*;
+import static mcdelta.ooh.OOH.log;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -12,7 +12,8 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 public enum EnumPacketTypes
 {
 	OOH_DATA_SET(PacketSetData.class),
-	OOH_DATA_GET(PacketGetData.class);
+	OOH_DATA_GET(PacketGetData.class),
+	ACTIVATE_ITEM(PacketActivateItem.class);
 
 	public Class<? extends PacketOOH>	clazz;
 
