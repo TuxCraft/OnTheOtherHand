@@ -1,22 +1,17 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.idMetaDamageMatch;
-import static mcdelta.ooh.OOH.isClient;
-import static mcdelta.ooh.OOH.isServer;
-import static mcdelta.ooh.OOH.log;
-import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
+import static mcdelta.ooh.OOH.*;
 
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
-import mcdelta.ooh.network.PacketGetData;
 import mcdelta.ooh.network.PacketSetData;
+import mcdelta.ooh.network.PacketSwingArm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.potion.Potion;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -75,7 +70,7 @@ public class PlayerTickHandler implements ITickHandler
 						if (rightClick.pressed)
 						{
 							data.swingArm(player);
-							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
+							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSwingArm(player, true)));
 						}
 
 						updateArmSwing(player, data);
@@ -86,7 +81,8 @@ public class PlayerTickHandler implements ITickHandler
 
 			else
 			{
-				//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
+				// PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new
+				// PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
 			}
 		}
 	}
