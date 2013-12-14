@@ -3,6 +3,7 @@ package mcdelta.ooh.handler;
 import static mcdelta.ooh.OOH.idMetaDamageMatch;
 import static mcdelta.ooh.OOH.isClient;
 import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.log;
 
 import java.util.EnumSet;
 
@@ -61,7 +62,7 @@ public class PlayerTickHandler implements ITickHandler
 					if (isClient())
 					{
 						data.swingProgress[1] = data.swingProgress[0];
-						
+
 						if (leftClick == null)
 						{
 							GameSettings settings = Minecraft.getMinecraft().gameSettings;
@@ -72,11 +73,20 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (rightClick.pressed)
 						{
-							data.swingProgress[0] = 0.5F;
+							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
+							{
+								data.swingProgressInt = -1;
+								data.swinging = true;
+							}
 						}
 
 						updateArmSwing(player, data);
 						OOHData.setOOHData(player, data);
+
+						if (data.swinging)
+						{
+							//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
+						}
 					}
 				}
 			}
@@ -111,6 +121,8 @@ public class PlayerTickHandler implements ITickHandler
 		}
 
 		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
+
+		// log(data.swingProgress[0]);
 	}
 
 

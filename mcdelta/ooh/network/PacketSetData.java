@@ -1,5 +1,10 @@
 package mcdelta.ooh.network;
 
+import static mcdelta.ooh.OOH.idMetaDamageMatch;
+import static mcdelta.ooh.OOH.isClient;
+import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -7,12 +12,13 @@ import java.io.IOException;
 import mcdelta.ooh.OOHData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.ServerConfigurationManager;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
-
-import static mcdelta.ooh.OOH.*;
 
 public class PacketSetData extends PacketOOH
 {
@@ -98,9 +104,12 @@ public class PacketSetData extends PacketOOH
 		OOHData data = new OOHData();
 		OOHData.setOOHData(entity, data.readFromNBT(tagCompound));
 
-		if (sendOutData)
+		if (sendOutData && isServer())
 		{
-			PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(entityID, tagCompound, false)));
+			for (EntityPlayer reciever : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
+			{
+				PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketSetData(entityID, tagCompound, false)), reciever);
+			}
 		}
 	}
 
