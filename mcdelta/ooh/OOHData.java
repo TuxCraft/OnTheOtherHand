@@ -1,22 +1,32 @@
 package mcdelta.ooh;
 
+import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
+
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import static mcdelta.ooh.OOH.*;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class OOHData
 {
+	@SideOnly (Side.CLIENT)
 	public float[]	 swingProgress;
+
+	@SideOnly (Side.CLIENT)
 	public int	     swingProgressInt;
+
+	@SideOnly (Side.CLIENT)
 	public boolean	 swinging;
+
 	public boolean	 doubleEngaged;
 	public ItemStack	secondItem;
 
 
 
 
+	@SideOnly (Side.CLIENT)
 	public OOHData ( )
 	{
 		swinging = false;
@@ -42,10 +52,6 @@ public class OOHData
 	{
 		compound.setBoolean("doubleEngaged", doubleEngaged);
 		compound.setCompoundTag("secondItem", secondItem == null ? new NBTTagCompound() : secondItem.writeToNBT(new NBTTagCompound()));
-		compound.setFloat("swingProgressA", swingProgress[0]);
-		compound.setFloat("swingProgressB", swingProgress[1]);
-		compound.setBoolean("swinging", swinging);
-		compound.setInteger("swingProgressInt", swingProgressInt);
 
 		return compound;
 	}
@@ -56,10 +62,6 @@ public class OOHData
 	public OOHData readFromNBT (NBTTagCompound compound)
 	{
 		doubleEngaged = compound.getBoolean("doubleEngaged");
-		swingProgress[0] = compound.getFloat("swingProgressA");
-		swingProgress[1] = compound.getFloat("swingProgressB");
-		swinging = compound.getBoolean("swinging");
-		swingProgressInt = compound.getInteger("swingProgressInt");
 
 		if (compound.getCompoundTag("secondItem").hasNoTags())
 		{
@@ -111,6 +113,7 @@ public class OOHData
 
 
 
+	@SideOnly (Side.CLIENT)
 	public float getSwingProgress (float f)
 	{
 		float f1 = this.swingProgress[0] - this.swingProgress[1];
@@ -121,5 +124,18 @@ public class OOHData
 		}
 
 		return this.swingProgress[1] + f1 * f;
+	}
+
+
+
+
+	@SideOnly (Side.CLIENT)
+	public void swingArm (EntityPlayer player)
+	{
+		if (!this.swinging || this.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || this.swingProgressInt < 0)
+		{
+			this.swingProgressInt = -1;
+			this.swinging = true;
+		}
 	}
 }

@@ -251,6 +251,8 @@ public class ThirdPersonRenderHandler
 					renderManager.itemRenderer.renderItem(player, stack, 0);
 				}
 
+				GL11.glTranslatef(0, 0, 0);
+				
 				GL11.glPopMatrix();
 			}
 		}

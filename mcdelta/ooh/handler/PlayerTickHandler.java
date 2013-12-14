@@ -4,6 +4,7 @@ import static mcdelta.ooh.OOH.idMetaDamageMatch;
 import static mcdelta.ooh.OOH.isClient;
 import static mcdelta.ooh.OOH.isServer;
 import static mcdelta.ooh.OOH.log;
+import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
 
 import java.util.EnumSet;
 
@@ -73,27 +74,19 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (rightClick.pressed)
 						{
-							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
-							{
-								data.swingProgressInt = -1;
-								data.swinging = true;
-							}
+							data.swingArm(player);
+							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
 						}
 
 						updateArmSwing(player, data);
 						OOHData.setOOHData(player, data);
-
-						if (data.swinging)
-						{
-							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
-						}
 					}
 				}
 			}
 
 			else
 			{
-				PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
+				//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
 			}
 		}
 	}
@@ -123,14 +116,6 @@ public class PlayerTickHandler implements ITickHandler
 		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
 
 		// log(data.swingProgress[0]);
-	}
-
-
-
-
-	private int getArmSwingAnimationEnd (EntityPlayer player)
-	{
-		return player.isPotionActive(Potion.digSpeed) ? 6 - (1 + player.getActivePotionEffect(Potion.digSpeed).getAmplifier()) * 1 : (player.isPotionActive(Potion.digSlowdown) ? 6 + (1 + player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2 : 6);
 	}
 
 

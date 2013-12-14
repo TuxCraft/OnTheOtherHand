@@ -5,7 +5,9 @@ import mcdelta.ooh.handler.PlayerTickHandler;
 import mcdelta.ooh.handler.PlayerTracker;
 import mcdelta.ooh.network.PacketHandler;
 import mcdelta.ooh.proxy.CommonProxy;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -75,5 +77,13 @@ public class OOH
 	public static boolean idMetaDamageMatch (ItemStack stack1, ItemStack stack2)
 	{
 		return stack1 != null && stack2 != null && stack1.itemID == stack2.itemID && stack1.getItemDamage() == stack2.getItemDamage() && stack1.stackSize == stack2.stackSize;
+	}
+
+
+
+
+	public static int getArmSwingAnimationEnd (EntityPlayer player)
+	{
+		return player.isPotionActive(Potion.digSpeed) ? 6 - (1 + player.getActivePotionEffect(Potion.digSpeed).getAmplifier()) * 1 : (player.isPotionActive(Potion.digSlowdown) ? 6 + (1 + player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2 : 6);
 	}
 }
