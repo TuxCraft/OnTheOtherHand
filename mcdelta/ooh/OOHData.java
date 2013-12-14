@@ -134,7 +134,10 @@ public class OOHData
 
 	public void swingArm (EntityPlayer player)
 	{
-		this.swingProgressInt = -1;
-		this.swinging = true;
+		if (!this.swinging || this.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || this.swingProgressInt < 0)
+		{
+			this.swingProgressInt = -1;
+			this.swinging = true;
+		}
 	}
 }

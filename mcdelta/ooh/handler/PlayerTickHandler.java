@@ -67,35 +67,30 @@ public class PlayerTickHandler implements ITickHandler
 							rightClick = settings.keyBindUseItem;
 						}
 
-						if (rightHeldTime == 1)
+						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
-							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
+							if (rightClick.pressed)
+							{
+								rightHeldTime++;
+							}
+
+							else
+							{
+								rightHeldTime = 0;
+							}
+
+							if (rightHeldTime == 1)
 							{
 								data.startSwing = true;
-								OOHData.setOOHData(player, data);
-								PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
+								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 							}
 						}
 
-						if (data.startSwing && rightHeldTime == 1)
+						if (data.startSwing)
 						{
 							data.swingArm(player);
-
 							data.startSwing = false;
-							OOHData.setOOHData(player, data);
-							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
 						}
-
-						if (rightClick.pressed && player.username == Minecraft.getMinecraft().thePlayer.username)
-						{
-							rightHeldTime++;
-						}
-						else
-						{
-							rightHeldTime = 0;
-						}
-						
-						log(rightHeldTime);
 
 						updateArmSwing(player, data);
 						OOHData.setOOHData(player, data);
