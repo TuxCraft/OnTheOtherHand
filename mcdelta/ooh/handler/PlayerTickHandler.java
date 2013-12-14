@@ -244,6 +244,8 @@ public class PlayerTickHandler implements ITickHandler
 		}
 
 		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
+		
+		//log(data.swinging + " " + data.swingProgress[0] + " " + data.swingProgressInt);
 	}
 
 

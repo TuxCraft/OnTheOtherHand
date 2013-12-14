@@ -133,7 +133,7 @@ public class OOHData
 
 
 	public void swingArm (EntityPlayer player)
-	{
+	{	
 		ItemStack stack = this.secondItem;
 
 		if (stack != null && stack.getItem() != null)
