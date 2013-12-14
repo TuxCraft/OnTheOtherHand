@@ -19,7 +19,9 @@ public class PlayerTickHandler implements ITickHandler
 {
 	private KeyBinding	leftClick;
 	private KeyBinding	rightClick;
+	private KeyBinding	key;
 	private int	       rightHeldTime	= 0;
+	private int	       leftHeldTime	 = 0;
 	private int	       cooldown	     = 0;
 
 
@@ -66,6 +68,8 @@ public class PlayerTickHandler implements ITickHandler
 
 							leftClick = settings.keyBindAttack;
 							rightClick = settings.keyBindUseItem;
+
+							key = new KeyBinding("nope", 0);
 						}
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
@@ -79,10 +83,18 @@ public class PlayerTickHandler implements ITickHandler
 							{
 								rightHeldTime++;
 							}
-
 							else
 							{
 								rightHeldTime = 0;
+							}
+							
+							if (leftClick.pressed)
+							{
+								leftHeldTime++;
+							}
+							else
+							{
+								leftHeldTime = 0;
 							}
 
 							if (rightHeldTime == 1 && cooldown == 0)
@@ -92,6 +104,16 @@ public class PlayerTickHandler implements ITickHandler
 								data.startSwing = true;
 								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 							}
+							
+							if (leftHeldTime == 1)
+							{
+								player.swingItem();
+							}
+
+							GameSettings settings = Minecraft.getMinecraft().gameSettings;
+
+							settings.keyBindAttack = key;
+							settings.keyBindUseItem = key;
 						}
 
 						if (data.startSwing)
@@ -104,12 +126,17 @@ public class PlayerTickHandler implements ITickHandler
 						OOHData.setOOHData(player, data);
 					}
 				}
-			}
 
-			else
-			{
-				// PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new
-				// PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
+				else
+				{
+					if (isClient())
+					{
+						GameSettings settings = Minecraft.getMinecraft().gameSettings;
+
+						settings.keyBindAttack = leftClick;
+						settings.keyBindUseItem = rightClick;
+					}
+				}
 			}
 		}
 	}
