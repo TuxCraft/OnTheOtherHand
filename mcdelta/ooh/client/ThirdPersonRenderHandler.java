@@ -363,6 +363,6 @@ public class ThirdPersonRenderHandler
 
 	protected float renderSwingProgress (EntityLivingBase living, float f)
 	{
-		return living.getSwingProgress(f);
+		return OOHData.getOOHData(living).getSwingProgress(f);
 	}
 }

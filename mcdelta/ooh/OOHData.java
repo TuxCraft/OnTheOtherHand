@@ -8,8 +8,9 @@ import static mcdelta.ooh.OOH.*;
 
 public class OOHData
 {
-	public float[]	 swingProgress	= new float[2];
-	public boolean	 doubleEngaged = true;
+	public float[]	 swingProgress	= new float[]
+	                               { 0, 0 };
+	public boolean	 doubleEngaged;
 	public ItemStack	secondItem;
 
 
@@ -58,7 +59,7 @@ public class OOHData
 			secondItem = new ItemStack(0, 0, 0);
 			secondItem.readFromNBT(compound.getCompoundTag("secondItem"));
 		}
-		
+
 		swingProgress[0] = compound.getFloat("swingProgressA");
 		swingProgress[1] = compound.getFloat("swingProgressB");
 
@@ -97,5 +98,14 @@ public class OOHData
 	public String toString ()
 	{
 		return "OOHData[ doubleEngaged:" + doubleEngaged + ", secondItem:" + secondItem + "]";
+	}
+
+
+
+
+	public float getSwingProgress (float f)
+	{
+		log(swingProgress[0]);
+		return swingProgress[0];
 	}
 }
