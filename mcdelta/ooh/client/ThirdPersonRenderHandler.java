@@ -118,11 +118,11 @@ public class ThirdPersonRenderHandler
 			{
 				float f6 = renderSwingProgress(player, event.partialRenderTick);
 				modelBipedMain.bipedBody.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * (float) Math.PI * 2.0F) * 0.2F;
-				modelBipedMain.bipedRightArm.rotationPointZ = MathHelper.sin(modelBipedMain.bipedBody.rotateAngleY) * 5.0F;
-				modelBipedMain.bipedRightArm.rotationPointX = -MathHelper.cos(modelBipedMain.bipedBody.rotateAngleY) * 5.0F;
+				//modelBipedMain.bipedRightArm.rotationPointZ = MathHelper.sin(modelBipedMain.bipedBody.rotateAngleY) * 5.0F;
+				//modelBipedMain.bipedRightArm.rotationPointX = -MathHelper.cos(modelBipedMain.bipedBody.rotateAngleY) * 5.0F;
 				arm.rotateAngleY -= modelBipedMain.bipedBody.rotateAngleY;
-				modelBipedMain.bipedRightArm.rotateAngleY -= modelBipedMain.bipedBody.rotateAngleY;
-				modelBipedMain.bipedRightArm.rotateAngleX -= modelBipedMain.bipedBody.rotateAngleY;
+				//modelBipedMain.bipedRightArm.rotateAngleY -= modelBipedMain.bipedBody.rotateAngleY;
+				//modelBipedMain.bipedRightArm.rotateAngleX -= modelBipedMain.bipedBody.rotateAngleY;
 				f6 = 1.0F - renderSwingProgress(player, event.partialRenderTick);
 				f6 *= f6;
 				f6 *= f6;
@@ -147,7 +147,7 @@ public class ThirdPersonRenderHandler
 			{
 				e.printStackTrace();
 			}
-
+			
 			arm.render(0.0625F);
 
 			modelBipedMain.bipedLeftArm.showModel = false;

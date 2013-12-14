@@ -1,9 +1,6 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
-import static mcdelta.ooh.OOH.idMetaDamageMatch;
-import static mcdelta.ooh.OOH.isClient;
-import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.*;
 
 import java.util.EnumSet;
 
@@ -70,7 +67,7 @@ public class PlayerTickHandler implements ITickHandler
 							rightClick = settings.keyBindUseItem;
 						}
 
-						if (rightHeldTime == 1 && player.username == Minecraft.getMinecraft().thePlayer.username)
+						if (rightHeldTime == 1)
 						{
 							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
 							{
@@ -89,7 +86,7 @@ public class PlayerTickHandler implements ITickHandler
 							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
 						}
 
-						if (rightClick.pressed)
+						if (rightClick.pressed && player.username == Minecraft.getMinecraft().thePlayer.username)
 						{
 							rightHeldTime++;
 						}
@@ -97,6 +94,8 @@ public class PlayerTickHandler implements ITickHandler
 						{
 							rightHeldTime = 0;
 						}
+						
+						log(rightHeldTime);
 
 						updateArmSwing(player, data);
 						OOHData.setOOHData(player, data);
