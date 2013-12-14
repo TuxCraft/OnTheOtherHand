@@ -14,6 +14,7 @@ public class OOHData
 	public int	     swingProgressInt;
 	public boolean	 swinging;
 	public boolean	 doubleEngaged;
+	public boolean	 startSwing;
 	public ItemStack	secondItem;
 
 
@@ -25,6 +26,7 @@ public class OOHData
 		swingProgressInt = 0;
 		swingProgress = new float[]
 		{ 0, 0 };
+		startSwing = false;
 	}
 
 
@@ -48,6 +50,7 @@ public class OOHData
 		compound.setFloat("swingProgressB", swingProgress[1]);
 		compound.setBoolean("swinging", swinging);
 		compound.setInteger("swingProgressInt", swingProgressInt);
+		compound.setBoolean("startSwing", startSwing);
 
 		return compound;
 	}
@@ -62,6 +65,7 @@ public class OOHData
 		swingProgress[1] = compound.getFloat("swingProgressB");
 		swinging = compound.getBoolean("swinging");
 		swingProgressInt = compound.getInteger("swingProgressInt");
+		startSwing = compound.getBoolean("startSwing");
 
 		if (compound.getCompoundTag("secondItem").hasNoTags())
 		{
@@ -130,12 +134,11 @@ public class OOHData
 
 	public void swingArm (EntityPlayer player)
 	{
-		if (!this.swinging || this.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || this.swingProgressInt < 0)
-		{
+		log("asd");
+		
+		
 			this.swingProgressInt = -1;
 			this.swinging = true;
-			
-			player.sendChatToPlayer(ChatMessageComponent.createFromText(String.valueOf("hi")));
-		}
+		
 	}
 }

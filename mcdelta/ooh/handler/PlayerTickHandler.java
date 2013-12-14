@@ -69,8 +69,24 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (rightClick.pressed && player.username == Minecraft.getMinecraft().thePlayer.username)
 						{
-							data.swingArm(player);
-							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSwingArm(player, true)));
+							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
+							{
+								data.startSwing = true;
+								OOHData.setOOHData(player, data);
+								PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
+							}
+						}
+
+						if (data.startSwing)
+						{
+							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
+							{
+								data.swingArm(player);
+							}
+
+							data.startSwing = false;
+							OOHData.setOOHData(player, data);
+							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
 						}
 
 						updateArmSwing(player, data);
@@ -81,7 +97,8 @@ public class PlayerTickHandler implements ITickHandler
 
 			else
 			{
-				//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
+				// PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new
+				// PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
 			}
 		}
 	}
