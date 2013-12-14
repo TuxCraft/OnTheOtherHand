@@ -1,13 +1,13 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.*;
+import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
+import static mcdelta.ooh.OOH.isClient;
+import static mcdelta.ooh.OOH.isServer;
 
-import java.lang.reflect.Method;
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
-import mcdelta.ooh.network.PacketActivateItem;
 import mcdelta.ooh.network.PacketSetData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
@@ -115,7 +115,7 @@ public class PlayerTickHandler implements ITickHandler
 					{
 						data.swingProgress[1] = data.swingProgress[0];
 
-						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
+						if (player.username.equals(player.username))
 						{
 							if (cooldownRight != 0)
 							{
@@ -145,12 +145,13 @@ public class PlayerTickHandler implements ITickHandler
 								leftHeldTime = 0;
 							}
 
-							if (((Minecraft.getMinecraft().objectMouseOver == null) ? rightHeldTime == 1 : rightHeldTime >= 1) && cooldownRight == 0)
+							//if (((Minecraft.getMinecraft().objectMouseOver == null) ? rightHeldTime == 1 : rightHeldTime >= 1) && cooldownRight == 0)
+							if (rightHeldTime >= 1 && cooldownRight == 0)
 							{
 								cooldownRight = 4;
 
 								player.inventory.currentItem = 8;
-								if (click(player, data.secondItem, 1))
+								if (click(player, 1))
 								{
 									data.startSwing = true;
 									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
@@ -158,11 +159,12 @@ public class PlayerTickHandler implements ITickHandler
 								player.inventory.currentItem = 0;
 							}
 
-							if (((Minecraft.getMinecraft().objectMouseOver == null) ? leftHeldTime == 1 : leftHeldTime >= 1) && cooldownLeft == 0)
+							//if (((Minecraft.getMinecraft().objectMouseOver == null) ? leftHeldTime == 1 : leftHeldTime >= 1) && cooldownLeft == 0)
+							if (rightHeldTime >= 1 && cooldownRight == 0)
 							{
 								cooldownLeft = 4;
 
-								if (click(player, player.getCurrentEquippedItem(), 1))
+								if (click(player, 1))
 								{
 									player.swingItem();
 								}
@@ -195,16 +197,88 @@ public class PlayerTickHandler implements ITickHandler
 	}
 
 
+	private boolean click(EntityPlayer player, int click)
+    {
+        if (click != 0)
+        {
+            boolean flag = true;
+            ItemStack itemstack = player.inventory.getCurrentItem();
 
+            if (Minecraft.getMinecraft().objectMouseOver == null)
+            {
+            	
+            }
+            else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.ENTITY)
+            {
+                if (click == 0)
+                {
+                    Minecraft.getMinecraft().playerController.attackEntity(player, Minecraft.getMinecraft().objectMouseOver.entityHit);
+                }
 
-	private boolean click (EntityPlayer player, ItemStack stack, int click)
+                if (click == 1 && Minecraft.getMinecraft().playerController.func_78768_b(player, Minecraft.getMinecraft().objectMouseOver.entityHit))
+                {
+                    flag = false;
+                }
+            }
+            else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
+            {
+                int j = Minecraft.getMinecraft().objectMouseOver.blockX;
+                int k = Minecraft.getMinecraft().objectMouseOver.blockY;
+                int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
+                int i1 = Minecraft.getMinecraft().objectMouseOver.sideHit;
+
+                if (click == 0)
+                {
+                    Minecraft.getMinecraft().playerController.clickBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
+                }
+                else
+                {
+                    int j1 = itemstack != null ? itemstack.stackSize : 0;
+
+                    boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, j, k, l, i1).isCanceled();
+                    if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(player, Minecraft.getMinecraft().theWorld, itemstack, j, k, l, i1, Minecraft.getMinecraft().objectMouseOver.hitVec))
+                    {
+                        flag = false;
+                        player.swingItem();
+                    }
+
+                    if (itemstack == null)
+                    {
+                        return true;
+                    }
+
+                    if (itemstack.stackSize == 0)
+                    {
+                        player.inventory.mainInventory[player.inventory.currentItem] = null;
+                    }
+                    else if (itemstack.stackSize != j1 || Minecraft.getMinecraft().playerController.isInCreativeMode())
+                    {
+                        Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
+                    }
+                }
+            }
+
+            if (flag && click == 1)
+            {
+                ItemStack itemstack1 = player.inventory.getCurrentItem();
+
+                boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
+                if (result && itemstack1 != null && Minecraft.getMinecraft().playerController.sendUseItem(player, Minecraft.getMinecraft().theWorld, itemstack1))
+                {
+                    Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress2();
+                }
+            }
+        }
+        
+        return false;
+    }
+
+	/**private boolean click (EntityPlayer player, ItemStack stack, int click)
 	{
 		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
 
 		if (target == null)
 		{
-			PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketActivateItem(player, stack)));
-			
 			return true;
 		}
 
@@ -254,7 +328,7 @@ public class PlayerTickHandler implements ITickHandler
 		}
 
 		return false;
-	}
+	}*/
 
 
 
