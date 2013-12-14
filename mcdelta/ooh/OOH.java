@@ -1,10 +1,12 @@
 package mcdelta.ooh;
 
+import mcdelta.ooh.client.ThirdPersonRenderHandler;
 import mcdelta.ooh.handler.PlayerTickHandler;
 import mcdelta.ooh.handler.PlayerTracker;
 import mcdelta.ooh.network.PacketHandler;
 import mcdelta.ooh.proxy.CommonProxy;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -40,6 +42,7 @@ public class OOH
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
+		MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());
 	}
 
 

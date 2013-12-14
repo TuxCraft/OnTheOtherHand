@@ -6,8 +6,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import mcdelta.ooh.Assets;
-import mcdelta.ooh.NBTHelper;
+import mcdelta.ooh.OOHData;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
@@ -30,6 +29,8 @@ import net.minecraftforge.event.ForgeSubscribe;
 
 import org.lwjgl.opengl.GL11;
 
+import static mcdelta.ooh.OOH.*;
+
 public class ThirdPersonRenderHandler
 {
 	private static final ResourceLocation	RES_ITEM_GLINT	       = new ResourceLocation("textures/misc/enchanted_item_glint.png");
@@ -50,18 +51,25 @@ public class ThirdPersonRenderHandler
 		try
 		{
 			EntityPlayer player = event.entityPlayer;
+			OOHData data = OOHData.getOOHData(player);
 			RenderPlayer renderer = event.renderer;
 
 			Field fi1 = renderer.getClass().getDeclaredField("modelBipedMain");
 			fi1.setAccessible(true);
 			modelBipedMain = (ModelBiped) fi1.get(renderer);
 
-			if (NBTHelper.holdingTwo(event.entityPlayer))
-			{
-				Field fi2 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
-				fi2.setAccessible(true);
-				renderManager = (RenderManager) fi2.get(renderer);
+			Field fi2 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
+			fi2.setAccessible(true);
+			renderManager = (RenderManager) fi2.get(renderer);
 
+			if(data != null)
+			{
+				GL11.glColor3f(0, 0, 0);
+				modelBipedMain.bipedHead.render(0.0625F);
+			}
+			
+			if (data != null && data.doubleEngaged)
+			{
 				Class[] param1 = new Class[]
 				{ net.minecraft.entity.Entity.class };
 				getEntityTexture = renderer.getClass().getDeclaredMethod("getEntityTexture", param1);
@@ -103,12 +111,7 @@ public class ThirdPersonRenderHandler
 
 				modelBipedMain.bipedLeftArm.showModel = false;
 
-				ItemStack stack = NBTHelper.getOffhandItem(player);
-
-				if (Minecraft.getMinecraft().thePlayer.username != player.username)
-				{
-					//Assets.p(stack);
-				}
+				ItemStack stack = data.secondItem;
 
 				if (stack == null)
 				{
@@ -221,11 +224,10 @@ public class ThirdPersonRenderHandler
 					GL11.glPopMatrix();
 				}
 			}
-
 			else
 			{
-				modelBipedMain.bipedLeftArm.showModel = true;
 				modelBipedMain.heldItemLeft = 0;
+				modelBipedMain.bipedLeftArm.showModel = true;
 			}
 		}
 		catch (Exception e)

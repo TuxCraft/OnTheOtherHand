@@ -54,11 +54,8 @@ public class PlayerTickHandler implements ITickHandler
 							PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))), (Player) player);
 						}
 					}
-				}
-
-				if (Minecraft.getMinecraft().thePlayer.username != player.username && data.doubleEngaged)
-				{
-					log(Minecraft.getMinecraft().thePlayer.username + " " + player.username + " " + data);
+					
+					PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))));
 				}
 			}
 		}
