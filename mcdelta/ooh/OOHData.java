@@ -1,12 +1,11 @@
 package mcdelta.ooh;
 
-import static mcdelta.ooh.OOH.*;
-
+import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatMessageComponent;
 
 public class OOHData
 {
@@ -134,6 +133,17 @@ public class OOHData
 
 	public void swingArm (EntityPlayer player)
 	{
+		ItemStack stack = this.secondItem;
+
+		if (stack != null && stack.getItem() != null)
+		{
+			Item item = stack.getItem();
+			if (item.onEntitySwing(player, stack))
+			{
+				return;
+			}
+		}
+
 		if (!this.swinging || this.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || this.swingProgressInt < 0)
 		{
 			this.swingProgressInt = -1;

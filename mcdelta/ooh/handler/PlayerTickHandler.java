@@ -1,6 +1,9 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.*;
+import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
+import static mcdelta.ooh.OOH.idMetaDamageMatch;
+import static mcdelta.ooh.OOH.isClient;
+import static mcdelta.ooh.OOH.isServer;
 
 import java.util.EnumSet;
 
@@ -11,6 +14,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumMovingObjectType;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -108,6 +115,8 @@ public class PlayerTickHandler implements ITickHandler
 							if (leftHeldTime == 1)
 							{
 								player.swingItem();
+								
+								primaryClick(player, data.secondItem);
 							}
 
 							GameSettings settings = Minecraft.getMinecraft().gameSettings;
@@ -140,6 +149,83 @@ public class PlayerTickHandler implements ITickHandler
 			}
 		}
 	}
+
+
+
+
+	private void primaryClick (EntityPlayer player, ItemStack stack)
+    {
+		boolean flag = true;
+		int par1 = 0;
+		
+		if (Minecraft.getMinecraft().objectMouseOver == null)
+        {
+            if (par1 == 0 && Minecraft.getMinecraft().playerController.isNotCreative())
+            {
+            	
+            }
+        }
+        else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.ENTITY)
+        {
+            if (par1 == 0)
+            {
+            	Minecraft.getMinecraft().playerController.attackEntity(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().objectMouseOver.entityHit);
+            }
+
+            if (par1 == 1 && Minecraft.getMinecraft().playerController.func_78768_b(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().objectMouseOver.entityHit))
+            {
+                flag = false;
+            }
+        }
+        else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
+        {
+            int j = Minecraft.getMinecraft().objectMouseOver.blockX;
+            int k = Minecraft.getMinecraft().objectMouseOver.blockY;
+            int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
+            int i1 = Minecraft.getMinecraft().objectMouseOver.sideHit;
+
+            if (par1 == 0)
+            {
+            	Minecraft.getMinecraft().playerController.clickBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
+            }
+            else
+            {
+                int j1 = stack != null ? stack.stackSize : 0;
+
+                boolean result = !ForgeEventFactory.onPlayerInteract(Minecraft.getMinecraft().thePlayer, Action.RIGHT_CLICK_BLOCK, j, k, l, i1).isCanceled();
+                if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().theWorld, stack, j, k, l, i1, Minecraft.getMinecraft().objectMouseOver.hitVec))
+                {
+                    flag = false;
+                    Minecraft.getMinecraft().thePlayer.swingItem();
+                }
+
+                if (stack == null)
+                {
+                    return;
+                }
+
+                if (stack.stackSize == 0)
+                {
+                	Minecraft.getMinecraft().thePlayer.inventory.mainInventory[Minecraft.getMinecraft().thePlayer.inventory.currentItem] = null;
+                }
+                else if (stack.stackSize != j1 || Minecraft.getMinecraft().playerController.isInCreativeMode())
+                {
+                	Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
+                }
+            }
+        }
+		
+		if (flag && par1 == 1)
+        {
+            ItemStack itemstack1 = Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem();
+
+            boolean result = !ForgeEventFactory.onPlayerInteract(Minecraft.getMinecraft().thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
+            if (result && itemstack1 != null && Minecraft.getMinecraft().playerController.sendUseItem(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().theWorld, itemstack1))
+            {
+                Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress2();
+            }
+        }
+    }
 
 
 
