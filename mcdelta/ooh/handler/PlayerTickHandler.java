@@ -40,7 +40,7 @@ public class PlayerTickHandler implements ITickHandler
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
 			OOHData data = OOHData.getOOHData(player);
-
+			
 			if (data.doubleEngaged)
 			{
 				if (isServer())
@@ -53,6 +53,8 @@ public class PlayerTickHandler implements ITickHandler
 					}
 				}
 			}
+			
+			log(data);
 		}
 	}
 

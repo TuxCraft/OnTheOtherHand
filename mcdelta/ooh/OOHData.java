@@ -4,6 +4,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import static mcdelta.ooh.OOH.*;
+
 public class OOHData
 {
 	public boolean	 doubleEngaged;
