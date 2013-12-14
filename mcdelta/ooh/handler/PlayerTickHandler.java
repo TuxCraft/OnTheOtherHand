@@ -73,8 +73,11 @@ public class PlayerTickHandler implements ITickHandler
 						if (!(idsMatch && metaMatch && sizeMatch) && bool)
 						{
 							data.secondItem = player.inventory.getStackInSlot(8);
+							data.startSwing = false;
 							OOHData.setOOHData(player, data);
 							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
+							
+							return;
 						}
 					}
 
@@ -120,16 +123,20 @@ public class PlayerTickHandler implements ITickHandler
 							if (rightHeldTime == 1 && cooldown == 0)
 							{
 								cooldown = 4;
-
-								data.startSwing = true;
-								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+								
+								if(click(player, data.secondItem, 1))
+								{
+									data.startSwing = true;
+									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+								}
 							}
 							
 							if (leftHeldTime == 1)
 							{
-								player.swingItem();
-								
-								//click(player, data.secondItem, 0);
+								if(click(player, player.getCurrentEquippedItem(), 1))
+								{
+									player.swingItem();
+								}
 							}
 
 							GameSettings settings = Minecraft.getMinecraft().gameSettings;
@@ -166,13 +173,16 @@ public class PlayerTickHandler implements ITickHandler
 
 
 
-	private void click (EntityPlayer player, ItemStack stack, int i)
+	private boolean click (EntityPlayer player, ItemStack stack, int i)
     {
+		log(isClient());
+		stack.useItemRightClick(player.worldObj, player);
+		
 		if (i != 0) //|| Minecraft.getMinecraft().leftClickCounter <= 0)
         {
             if (i == 0)
             {
-                Minecraft.getMinecraft().thePlayer.swingItem();
+                return true;
             }
 
             if (i == 1)
@@ -181,7 +191,6 @@ public class PlayerTickHandler implements ITickHandler
             }
 
             boolean flag = true;
-            ItemStack itemstack = Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem();
 
             if (Minecraft.getMinecraft().objectMouseOver == null)
             {
@@ -215,25 +224,20 @@ public class PlayerTickHandler implements ITickHandler
                 }
                 else
                 {
-                    int j1 = itemstack != null ? itemstack.stackSize : 0;
+                    int j1 = stack != null ? stack.stackSize : 0;
 
                     boolean result = !ForgeEventFactory.onPlayerInteract(Minecraft.getMinecraft().thePlayer, Action.RIGHT_CLICK_BLOCK, j, k, l, i1).isCanceled();
-                    if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().theWorld, itemstack, j, k, l, i1, Minecraft.getMinecraft().objectMouseOver.hitVec))
+                    if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().theWorld, stack, j, k, l, i1, Minecraft.getMinecraft().objectMouseOver.hitVec))
                     {
                         flag = false;
-                        Minecraft.getMinecraft().thePlayer.swingItem();
+                        return true;
                     }
 
-                    if (itemstack == null)
-                    {
-                        return;
-                    }
-
-                    if (itemstack.stackSize == 0)
+                    if (stack.stackSize == 0)
                     {
                         Minecraft.getMinecraft().thePlayer.inventory.mainInventory[Minecraft.getMinecraft().thePlayer.inventory.currentItem] = null;
                     }
-                    else if (itemstack.stackSize != j1 || Minecraft.getMinecraft().playerController.isInCreativeMode())
+                    else if (stack.stackSize != j1 || Minecraft.getMinecraft().playerController.isInCreativeMode())
                     {
                         Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
                     }
@@ -242,15 +246,15 @@ public class PlayerTickHandler implements ITickHandler
 
             if (flag && i == 1)
             {
-                ItemStack itemstack1 = Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem();
-
                 boolean result = !ForgeEventFactory.onPlayerInteract(Minecraft.getMinecraft().thePlayer, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
-                if (result && itemstack1 != null && Minecraft.getMinecraft().playerController.sendUseItem(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().theWorld, itemstack1))
+                if (result && stack != null && Minecraft.getMinecraft().playerController.sendUseItem(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().theWorld, stack))
                 {
                     Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress2();
                 }
             }
         }
+		
+		return false;
     }
 
 
