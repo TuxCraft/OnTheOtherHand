@@ -14,8 +14,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import cpw.mods.fml.common.ITickHandler;
@@ -145,28 +145,46 @@ public class PlayerTickHandler implements ITickHandler
 								leftHeldTime = 0;
 							}
 
-							//if (((Minecraft.getMinecraft().objectMouseOver == null) ? rightHeldTime == 1 : rightHeldTime >= 1) && cooldownRight == 0)
+							// if (((Minecraft.getMinecraft().objectMouseOver ==
+							// null) ? rightHeldTime == 1 : rightHeldTime >= 1)
+							// && cooldownRight == 0)
 							if (rightHeldTime >= 1 && cooldownRight == 0)
 							{
 								cooldownRight = 4;
 
+								int i = data.secondItem.getItem() instanceof ItemTool ? 1 : 0;
+
 								player.inventory.currentItem = 8;
-								if (click(player, 1))
+								if (click(player, i))
 								{
 									data.startSwing = true;
 									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 								}
+								
+								if(i == 1)
+								{
+									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && rightClick.pressed && Minecraft.getMinecraft().inGameHasFocus);
+								}
 								player.inventory.currentItem = 0;
 							}
 
-							//if (((Minecraft.getMinecraft().objectMouseOver == null) ? leftHeldTime == 1 : leftHeldTime >= 1) && cooldownLeft == 0)
-							if (rightHeldTime >= 1 && cooldownRight == 0)
+							// if (((Minecraft.getMinecraft().objectMouseOver ==
+							// null) ? leftHeldTime == 1 : leftHeldTime >= 1) &&
+							// cooldownLeft == 0)
+							if (leftHeldTime >= 1 && cooldownLeft == 0)
 							{
 								cooldownLeft = 4;
 
-								if (click(player, 1))
+								int i = player.getCurrentEquippedItem().getItem() instanceof ItemTool ? 1 : 0;
+
+								if (click(player, i))
 								{
 									player.swingItem();
+								}
+								
+								if(i == 1)
+								{
+									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && leftClick.pressed && Minecraft.getMinecraft().inGameHasFocus);
 								}
 							}
 						}
@@ -197,141 +215,148 @@ public class PlayerTickHandler implements ITickHandler
 	}
 
 
-	private boolean click(EntityPlayer player, int click)
-    {
-        if (click != 0)
-        {
-            boolean flag = true;
-            ItemStack itemstack = player.inventory.getCurrentItem();
 
-            if (Minecraft.getMinecraft().objectMouseOver == null)
-            {
-            	
-            }
-            else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.ENTITY)
-            {
-                if (click == 0)
-                {
-                    Minecraft.getMinecraft().playerController.attackEntity(player, Minecraft.getMinecraft().objectMouseOver.entityHit);
-                }
 
-                if (click == 1 && Minecraft.getMinecraft().playerController.func_78768_b(player, Minecraft.getMinecraft().objectMouseOver.entityHit))
-                {
-                    flag = false;
-                }
-            }
-            else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
-            {
-                int j = Minecraft.getMinecraft().objectMouseOver.blockX;
-                int k = Minecraft.getMinecraft().objectMouseOver.blockY;
-                int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
-                int i1 = Minecraft.getMinecraft().objectMouseOver.sideHit;
-
-                if (click == 0)
-                {
-                    Minecraft.getMinecraft().playerController.clickBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
-                }
-                else
-                {
-                    int j1 = itemstack != null ? itemstack.stackSize : 0;
-
-                    boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, j, k, l, i1).isCanceled();
-                    if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(player, Minecraft.getMinecraft().theWorld, itemstack, j, k, l, i1, Minecraft.getMinecraft().objectMouseOver.hitVec))
-                    {
-                        flag = false;
-                        player.swingItem();
-                    }
-
-                    if (itemstack == null)
-                    {
-                        return true;
-                    }
-
-                    if (itemstack.stackSize == 0)
-                    {
-                        player.inventory.mainInventory[player.inventory.currentItem] = null;
-                    }
-                    else if (itemstack.stackSize != j1 || Minecraft.getMinecraft().playerController.isInCreativeMode())
-                    {
-                        Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
-                    }
-                }
-            }
-
-            if (flag && click == 1)
-            {
-                ItemStack itemstack1 = player.inventory.getCurrentItem();
-
-                boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
-                if (result && itemstack1 != null && Minecraft.getMinecraft().playerController.sendUseItem(player, Minecraft.getMinecraft().theWorld, itemstack1))
-                {
-                    Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress2();
-                }
-            }
-        }
-        
-        return false;
-    }
-
-	/**private boolean click (EntityPlayer player, ItemStack stack, int click)
+	private void sendClickBlockToController (int par1, boolean par2)
 	{
-		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
-
-		if (target == null)
+		if (par1 != 0)
 		{
-			return true;
-		}
-
-		if (stack == null)
-		{
-			if (target.typeOfHit == EnumMovingObjectType.TILE)
+			if (par2 && Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE && par1 == 0)
 			{
-				return true;
+				int j = Minecraft.getMinecraft().objectMouseOver.blockX;
+				int k = Minecraft.getMinecraft().objectMouseOver.blockY;
+				int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
+				Minecraft.getMinecraft().playerController.onPlayerDamageBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
+
+				if (Minecraft.getMinecraft().thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
+				{
+					Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(j, k, l, Minecraft.getMinecraft().objectMouseOver);
+					Minecraft.getMinecraft().thePlayer.swingItem();
+				}
+			}
+			else
+			{
+				Minecraft.getMinecraft().playerController.resetBlockRemoving();
 			}
 		}
+	}
 
-		else
+
+
+
+	private boolean click (EntityPlayer player, int click)
+	{
+		if (click != 0)
 		{
-			switch (target.typeOfHit)
+			boolean flag = true;
+			ItemStack itemstack = player.inventory.getCurrentItem();
+
+			if (Minecraft.getMinecraft().objectMouseOver == null)
 			{
-				case TILE:
 
-					int x = target.blockX;
-					int y = target.blockY;
-					int z = target.blockZ;
-					int side = target.sideHit;
+			}
+			else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.ENTITY)
+			{
+				if (click == 0)
+				{
+					Minecraft.getMinecraft().playerController.attackEntity(player, Minecraft.getMinecraft().objectMouseOver.entityHit);
+				}
 
-					boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
-					boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
+				if (click == 1 && Minecraft.getMinecraft().playerController.func_78768_b(player, Minecraft.getMinecraft().objectMouseOver.entityHit))
+				{
+					flag = false;
+				}
+			}
+			else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
+			{
+				int j = Minecraft.getMinecraft().objectMouseOver.blockX;
+				int k = Minecraft.getMinecraft().objectMouseOver.blockY;
+				int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
+				int i1 = Minecraft.getMinecraft().objectMouseOver.sideHit;
 
-					if (result && bool)
+				if (click == 0)
+				{
+					Minecraft.getMinecraft().playerController.clickBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
+				}
+				else
+				{
+					int j1 = itemstack != null ? itemstack.stackSize : 0;
+
+					boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, j, k, l, i1).isCanceled();
+					if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(player, Minecraft.getMinecraft().theWorld, itemstack, j, k, l, i1, Minecraft.getMinecraft().objectMouseOver.hitVec))
 					{
-						if (stack.stackSize == 0)
-						{
-							stack = null;
-						}
+						flag = false;
+						player.swingItem();
+					}
 
+					if (itemstack == null)
+					{
 						return true;
 					}
 
-					break;
-
-				case ENTITY:
-
-					if (Minecraft.getMinecraft().playerController.func_78768_b(player, target.entityHit))
+					if (itemstack.stackSize == 0)
 					{
-						return true;
+						player.inventory.mainInventory[player.inventory.currentItem] = null;
 					}
+					else if (itemstack.stackSize != j1 || Minecraft.getMinecraft().playerController.isInCreativeMode())
+					{
+						Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
+					}
+				}
+			}
 
-					break;
+			if (flag && click == 1)
+			{
+				ItemStack itemstack1 = player.inventory.getCurrentItem();
+
+				boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
+				if (result && itemstack1 != null && Minecraft.getMinecraft().playerController.sendUseItem(player, Minecraft.getMinecraft().theWorld, itemstack1))
+				{
+					Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress2();
+				}
 			}
 		}
 
 		return false;
-	}*/
+	}
 
 
 
+
+	/**
+	 * private boolean click (EntityPlayer player, ItemStack stack, int click) {
+	 * MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
+	 * 
+	 * if (target == null) { return true; }
+	 * 
+	 * if (stack == null) { if (target.typeOfHit == EnumMovingObjectType.TILE) {
+	 * return true; } }
+	 * 
+	 * else { switch (target.typeOfHit) { case TILE:
+	 * 
+	 * int x = target.blockX; int y = target.blockY; int z = target.blockZ; int
+	 * side = target.sideHit;
+	 * 
+	 * boolean result = !ForgeEventFactory.onPlayerInteract(player,
+	 * Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled(); boolean bool =
+	 * Minecraft.getMinecraft().playerController.onPlayerRightClick(player,
+	 * player.worldObj, stack, x, y, z, side, target.hitVec);
+	 * 
+	 * if (result && bool) { if (stack.stackSize == 0) { stack = null; }
+	 * 
+	 * return true; }
+	 * 
+	 * break;
+	 * 
+	 * case ENTITY:
+	 * 
+	 * if (Minecraft.getMinecraft().playerController.func_78768_b(player,
+	 * target.entityHit)) { return true; }
+	 * 
+	 * break; } }
+	 * 
+	 * return false; }
+	 */
 
 	private void updateArmSwing (EntityPlayer player, OOHData data)
 	{
