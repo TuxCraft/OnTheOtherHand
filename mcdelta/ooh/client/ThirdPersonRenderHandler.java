@@ -42,7 +42,6 @@ public class ThirdPersonRenderHandler
 	private ModelBiped	                  modelBipedMain;
 	private Method	                      getEntityTexture;
 	private ModelRenderer	              arm;
-	private ModelRenderer	              armArmor;
 
 
 
@@ -118,11 +117,6 @@ public class ThirdPersonRenderHandler
 			arm.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.0F);
 			arm.setRotationPoint(5.0F, 2.0F + 0.0F, 0.0F);
 
-			armArmor = new ModelRenderer(modelBipedMain, 40, 16);
-			armArmor.mirror = true;
-			armArmor.addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, 0.0F);
-			armArmor.setRotationPoint(5.0F, 2.0F + 0.0F, 0.0F);
-
 			arm.rotateAngleX = modelBipedMain.bipedLeftArm.rotateAngleX;
 			arm.rotateAngleY = modelBipedMain.bipedLeftArm.rotateAngleY;
 			arm.rotateAngleZ = modelBipedMain.bipedLeftArm.rotateAngleZ;
@@ -146,10 +140,6 @@ public class ThirdPersonRenderHandler
 				arm.rotateAngleY -= modelBipedMain.bipedBody.rotateAngleY * 2.0F;
 				arm.rotateAngleZ = -MathHelper.sin(renderSwingProgress(player, event.partialRenderTick) * (float) Math.PI) * -0.4F;
 			}
-
-			armArmor.rotateAngleX = arm.rotateAngleX;
-			armArmor.rotateAngleY = arm.rotateAngleY;
-			armArmor.rotateAngleZ = arm.rotateAngleZ;
 			
 			try
 			{
@@ -166,11 +156,8 @@ public class ThirdPersonRenderHandler
 			}
 			
 			arm.render(0.0625F);
-			
-			armArmor.render(0.0625F);
 
 			modelBipedMain.bipedLeftArm.showModel = false;
-			modelArmorChestplate.bipedLeftArm.showModel = false;
 
 			ItemStack stack = data.doubleEngaged ? data.secondItem : null;
 
