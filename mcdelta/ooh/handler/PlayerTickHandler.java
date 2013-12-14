@@ -116,7 +116,7 @@ public class PlayerTickHandler implements ITickHandler
 							{
 								player.swingItem();
 								
-								primaryClick(player, data.secondItem, 0);
+								//click(player, data.secondItem, 0);
 							}
 
 							GameSettings settings = Minecraft.getMinecraft().gameSettings;
@@ -153,7 +153,7 @@ public class PlayerTickHandler implements ITickHandler
 
 
 
-	private void primaryClick (EntityPlayer player, ItemStack stack, int i)
+	private void click (EntityPlayer player, ItemStack stack, int i)
     {
 		if (i != 0) //|| Minecraft.getMinecraft().leftClickCounter <= 0)
         {
