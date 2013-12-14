@@ -87,8 +87,8 @@ public class PlayerTickHandler implements ITickHandler
 
 							if (rightHeldTime == 1 && cooldown == 0)
 							{
-								cooldown = 5;
-								
+								cooldown = 4;
+
 								data.startSwing = true;
 								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 							}
