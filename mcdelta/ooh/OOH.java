@@ -44,7 +44,11 @@ public class OOH
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
-		MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());
+
+		if (isClient())
+		{
+			MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());
+		}
 	}
 
 

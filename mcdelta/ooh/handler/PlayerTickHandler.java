@@ -42,13 +42,7 @@ public class PlayerTickHandler implements ITickHandler
 			OOHData data = OOHData.getOOHData(player);
 
 			if (data != null)
-			{
-				data.swinging = false;
-				data.swingProgressInt = 0;
-				data.swingProgress = new float[]
-				{ 0, 0 };
-				OOHData.setOOHData(player, data);
-				
+			{	
 				if (data.doubleEngaged)
 				{
 					if (isServer())
@@ -75,8 +69,8 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (rightClick.pressed)
 						{
-							data.swingArm(player);
-							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSwingArm(player, true)));
+							//data.swingArm(player);
+							//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSwingArm(player, true)));
 						}
 
 						updateArmSwing(player, data);
