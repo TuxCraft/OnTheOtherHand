@@ -1,9 +1,6 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
-import static mcdelta.ooh.OOH.idMetaDamageMatch;
-import static mcdelta.ooh.OOH.isClient;
-import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.*;
 
 import java.util.EnumSet;
 
@@ -57,7 +54,10 @@ public class PlayerTickHandler implements ITickHandler
 				{
 					if (isServer())
 					{
-						if (!idMetaDamageMatch(data.secondItem, player.inventory.getStackInSlot(8)))
+						ItemStack stack1 = data.secondItem;
+						ItemStack stack2 = player.inventory.getStackInSlot(8);
+						
+						if (stack1 != stack2)
 						{
 							data.secondItem = player.inventory.getStackInSlot(8);
 							OOHData.setOOHData(player, data);
@@ -127,8 +127,8 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (data.startSwing)
 						{
-							data.swingArm(player);
 							data.startSwing = false;
+							data.swingArm(player);
 						}
 
 						updateArmSwing(player, data);

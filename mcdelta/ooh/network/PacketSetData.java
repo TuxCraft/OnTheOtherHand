@@ -1,6 +1,6 @@
 package mcdelta.ooh.network;
 
-import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

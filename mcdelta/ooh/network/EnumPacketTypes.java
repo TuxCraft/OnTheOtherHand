@@ -1,5 +1,7 @@
 package mcdelta.ooh.network;
 
+import static mcdelta.ooh.OOH.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
@@ -60,6 +62,8 @@ public enum EnumPacketTypes
 		packet250.length = data.length;
 		packet250.isChunkDataPacket = false;
 
+		log(packet.getClass().getSimpleName());
+		
 		return packet250;
 	}
 }
