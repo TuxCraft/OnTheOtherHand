@@ -343,6 +343,8 @@ public class FirstPersonRenderHandler
 		{
 			GL11.glPushMatrix();
 			f12 = 0.8F;
+			
+			GL11.glScalef(-1.0F, 1.0F, 1.0F);
 
 			if (entityclientplayermp.getItemInUseCount() > 0)
 			{
@@ -369,18 +371,18 @@ public class FirstPersonRenderHandler
 				f7 = data.getSwingProgress(partialTicks);
 				f8 = MathHelper.sin(f7 * (float) Math.PI);
 				f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
-				GL11.glTranslatef(f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
+				GL11.glTranslatef(-f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float)Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
 			}
 
-			GL11.glTranslatef(-0.7F * f12, -0.65F * f12 - (1.0F - f1) * 0.6F, -0.9F * f12);
+			GL11.glTranslatef(0.7F * f12, -0.65F * f12 - (1.0F - f1) * 0.6F, -0.9F * f12);
 			GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			f7 = data.getSwingProgress(partialTicks);
 			f8 = MathHelper.sin(f7 * f7 * (float) Math.PI);
 			f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 			GL11.glRotatef(-f8 * 20.0F, 0.0F, 1.0F, 0.0F);
-			GL11.glRotatef(-f6 * 80.0F, 0.0F, 0.0F, 1.0F);
-			GL11.glRotatef(-f6 * 40.0F, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(-f6 * 20.0F, 0.0F, 0.0F, 1.0F);
+            GL11.glRotatef(-f6 * 80.0F, 1.0F, 0.0F, 0.0F);
 			f9 = 0.4F;
 			GL11.glScalef(f9, f9, f9);
 			float f13;
@@ -433,7 +435,7 @@ public class FirstPersonRenderHandler
 			{
 				GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
 			}
-
+			
 			if (itemstack.getItem().requiresMultipleRenderPasses())
 			{
 				renderer.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
@@ -449,6 +451,8 @@ public class FirstPersonRenderHandler
 			}
 			else
 			{
+				GL11.glScalef(1.0F, 1.0F, -1.0F);
+				GL11.glScalef(1.0F, 1.0F, 1.0F);
 				renderer.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
 			}
 
