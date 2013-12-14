@@ -57,7 +57,20 @@ public class PlayerTickHandler implements ITickHandler
 						ItemStack stack1 = data.secondItem;
 						ItemStack stack2 = player.inventory.getStackInSlot(8);
 						
-						if (stack1 != stack2)
+						boolean idsMatch = false;
+						boolean metaMatch = false;
+						boolean sizeMatch = false;
+						boolean bool = stack1 != stack2;
+						
+						if(stack1 != null && stack2 != null)
+						{
+							idsMatch = stack1.itemID == stack2.itemID;
+							metaMatch = stack1.getItemDamage() == stack2.getItemDamage();
+							sizeMatch = stack1.stackSize == stack2.stackSize;
+							bool = true;
+						}
+						
+						if (!(idsMatch && metaMatch && sizeMatch) && bool)
 						{
 							data.secondItem = player.inventory.getStackInSlot(8);
 							OOHData.setOOHData(player, data);

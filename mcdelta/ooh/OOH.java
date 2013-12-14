@@ -82,7 +82,7 @@ public class OOH
 
 	public static boolean idMetaDamageMatch (ItemStack stack1, ItemStack stack2)
 	{
-		return stack1 != null && stack2 != null && stack1.itemID == stack2.itemID && stack1.getItemDamage() == stack2.getItemDamage() && stack1.stackSize == stack2.stackSize;
+		return stack1.itemID == stack2.itemID && stack1.getItemDamage() == stack2.getItemDamage() && stack1.stackSize == stack2.stackSize;
 	}
 
 
