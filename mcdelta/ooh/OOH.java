@@ -1,6 +1,6 @@
 package mcdelta.ooh;
 
-import mcdelta.ooh.handler.PlayerHandler;
+import mcdelta.ooh.handler.PlayerTracker;
 import mcdelta.ooh.proxy.CommonProxy;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -11,7 +11,8 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod (modid = OOH.modid, useMetadata = true, name = "On the Other Hand", version = "0.1")
-@NetworkMod (clientSideRequired = true, serverSideRequired = false, channels = { OOH.modid })
+@NetworkMod (clientSideRequired = true, serverSideRequired = false, channels =
+{ OOH.modid })
 public class OOH
 {
 	@Instance (OOH.modid)
@@ -29,7 +30,15 @@ public class OOH
 	public void load (FMLInitializationEvent event)
 	{
 		proxy.registerKeyBinds();
-		
-		GameRegistry.registerPlayerTracker(new PlayerHandler());
+
+		GameRegistry.registerPlayerTracker(new PlayerTracker());
+	}
+
+
+
+
+	public static void log (Object message)
+	{
+		System.out.println(message);
 	}
 }
