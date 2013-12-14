@@ -43,8 +43,6 @@ public class KeyBindHandler extends KeyHandler
 			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 			OOHData data = OOHData.getOOHData(player);
 			
-			log(data.doubleEngaged);
-			
 			if(data.doubleEngaged)
 			{
 				data.doubleEngaged = false;
