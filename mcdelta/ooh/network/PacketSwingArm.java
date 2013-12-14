@@ -1,6 +1,6 @@
 package mcdelta.ooh.network;
 
-import static mcdelta.ooh.OOH.log;
+import static mcdelta.ooh.OOH.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -10,6 +10,7 @@ import mcdelta.ooh.OOHData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
+import net.minecraft.util.ChatMessageComponent;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
@@ -43,6 +44,7 @@ public class PacketSwingArm extends PacketOOH
 	public void writeData (DataOutputStream data) throws IOException
 	{
 		data.writeInt(entityID);
+		data.writeBoolean(sendOutData);
 	}
 
 
@@ -52,6 +54,7 @@ public class PacketSwingArm extends PacketOOH
 	public void readData (DataInputStream data) throws IOException
 	{
 		entityID = data.readInt();
+		sendOutData = data.readBoolean();
 	}
 
 
@@ -61,15 +64,15 @@ public class PacketSwingArm extends PacketOOH
 	public void execute (INetworkManager manager, Player playerParam)
 	{
 		EntityPlayer player = (EntityPlayer) playerParam;
-		EntityPlayer entity = (EntityPlayer) player.worldObj.getEntityByID(entityID);
+		EntityPlayer thePlayer = (EntityPlayer) player.worldObj.getEntityByID(entityID);
 		OOHData data = new OOHData();
-		data.swingArm(entity);
+		data.swingArm(thePlayer);
 
-		log(sendOutData);
+		//player.sendChatToPlayer(ChatMessageComponent.createFromText(String.valueOf(thePlayer.username + " " + isClient())));
 
 		if (sendOutData)
 		{
-			PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSwingArm(entity, false)));
+			PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSwingArm(thePlayer, false)));
 		}
 	}
 }

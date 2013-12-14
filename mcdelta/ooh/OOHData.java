@@ -1,10 +1,12 @@
 package mcdelta.ooh;
 
-import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
+import static mcdelta.ooh.OOH.*;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatMessageComponent;
 
 public class OOHData
 {
@@ -132,6 +134,8 @@ public class OOHData
 		{
 			this.swingProgressInt = -1;
 			this.swinging = true;
+			
+			player.sendChatToPlayer(ChatMessageComponent.createFromText(String.valueOf("hi")));
 		}
 	}
 }

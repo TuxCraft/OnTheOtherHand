@@ -42,7 +42,7 @@ public class PlayerTickHandler implements ITickHandler
 			OOHData data = OOHData.getOOHData(player);
 
 			if (data != null)
-			{	
+			{
 				if (data.doubleEngaged)
 				{
 					if (isServer())
@@ -81,8 +81,7 @@ public class PlayerTickHandler implements ITickHandler
 
 			else
 			{
-				// PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new
-				// PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
+				//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
 			}
 		}
 	}
