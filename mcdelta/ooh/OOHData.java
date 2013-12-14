@@ -1,6 +1,6 @@
 package mcdelta.ooh;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -60,7 +60,7 @@ public class OOHData
 
 
 
-	public static OOHData getOOHData (EntityPlayer player)
+	public static OOHData getOOHData (Entity player)
 	{
 		if (player.getEntityData().hasKey("OOHData"))
 		{
@@ -77,7 +77,7 @@ public class OOHData
 
 
 
-	public static void setOOHData (EntityPlayer player, OOHData data)
+	public static void setOOHData (Entity player, OOHData data)
 	{
 		player.getEntityData().setCompoundTag("OOHData", data.writeToNBT(new NBTTagCompound()));
 	}
