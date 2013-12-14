@@ -452,7 +452,7 @@ public class FirstPersonRenderHandler
 			else
 			{
 				GL11.glScalef(1.0F, 1.0F, -1.0F);
-				GL11.glScalef(1.0F, 1.0F, 1.0F);
+				GL11.glRotatef(270, 0, 1, 0);
 				renderer.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
 			}
 
