@@ -1,8 +1,6 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
-import static mcdelta.ooh.OOH.isClient;
-import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.*;
 
 import java.lang.reflect.Method;
 import java.util.EnumSet;
@@ -56,11 +54,13 @@ public class PlayerTickHandler implements ITickHandler
 							leftClick = settings.keyBindAttack;
 							rightClick = settings.keyBindUseItem;
 
-							key = new KeyBinding("nope", 0);
+							key = new KeyBinding("nope", 70);
 						}
 						
 						settings.keyBindAttack = key;
 						settings.keyBindUseItem = key;
+						
+						//log(settings.keyBindAttack);
 					}
 				}
 			}
