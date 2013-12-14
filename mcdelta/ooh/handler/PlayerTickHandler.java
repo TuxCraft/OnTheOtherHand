@@ -14,11 +14,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.PacketDispatcher;
-
-import static mcdelta.ooh.OOH.*;
 
 public class PlayerTickHandler implements ITickHandler
 {
@@ -58,9 +57,11 @@ public class PlayerTickHandler implements ITickHandler
 							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
 						}
 					}
-					
+
 					if (isClient())
 					{
+						data.swingProgress[1] = data.swingProgress[0];
+						
 						if (leftClick == null)
 						{
 							GameSettings settings = Minecraft.getMinecraft().gameSettings;
@@ -68,12 +69,14 @@ public class PlayerTickHandler implements ITickHandler
 							leftClick = settings.keyBindAttack;
 							rightClick = settings.keyBindUseItem;
 						}
-						
+
 						if (rightClick.pressed)
 						{
 							data.swingProgress[0] = 0.5F;
-							OOHData.setOOHData(player, data);
 						}
+
+						updateArmSwing(player, data);
+						OOHData.setOOHData(player, data);
 					}
 				}
 			}
@@ -83,6 +86,39 @@ public class PlayerTickHandler implements ITickHandler
 				PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
 			}
 		}
+	}
+
+
+
+
+	private void updateArmSwing (EntityPlayer player, OOHData data)
+	{
+		int i = getArmSwingAnimationEnd(player);
+
+		if (data.swinging)
+		{
+			++data.swingProgressInt;
+
+			if (data.swingProgressInt >= i)
+			{
+				data.swingProgressInt = 0;
+				data.swinging = false;
+			}
+		}
+		else
+		{
+			data.swingProgressInt = 0;
+		}
+
+		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
+	}
+
+
+
+
+	private int getArmSwingAnimationEnd (EntityPlayer player)
+	{
+		return player.isPotionActive(Potion.digSpeed) ? 6 - (1 + player.getActivePotionEffect(Potion.digSpeed).getAmplifier()) * 1 : (player.isPotionActive(Potion.digSlowdown) ? 6 + (1 + player.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2 : 6);
 	}
 
 

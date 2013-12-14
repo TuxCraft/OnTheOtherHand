@@ -8,8 +8,9 @@ import static mcdelta.ooh.OOH.*;
 
 public class OOHData
 {
-	public float[]	 swingProgress	= new float[]
-	                               { 0, 0 };
+	public float[]	 swingProgress;
+	public int	     swingProgressInt;
+	public boolean	 swinging;
 	public boolean	 doubleEngaged;
 	public ItemStack	secondItem;
 
@@ -18,7 +19,10 @@ public class OOHData
 
 	public OOHData ( )
 	{
-
+		swinging = false;
+		swingProgressInt = 0;
+		swingProgress = new float[]
+		{ 0, 0 };
 	}
 
 
@@ -26,6 +30,7 @@ public class OOHData
 
 	public OOHData (boolean b, ItemStack item)
 	{
+		this();
 		doubleEngaged = b;
 		secondItem = item;
 	}
@@ -39,6 +44,8 @@ public class OOHData
 		compound.setCompoundTag("secondItem", secondItem == null ? new NBTTagCompound() : secondItem.writeToNBT(new NBTTagCompound()));
 		compound.setFloat("swingProgressA", swingProgress[0]);
 		compound.setFloat("swingProgressB", swingProgress[1]);
+		compound.setBoolean("swinging", swinging);
+		compound.setInteger("swingProgressInt", swingProgressInt);
 
 		return compound;
 	}
@@ -49,6 +56,10 @@ public class OOHData
 	public OOHData readFromNBT (NBTTagCompound compound)
 	{
 		doubleEngaged = compound.getBoolean("doubleEngaged");
+		swingProgress[0] = compound.getFloat("swingProgressA");
+		swingProgress[1] = compound.getFloat("swingProgressB");
+		swinging = compound.getBoolean("swinging");
+		swingProgressInt = compound.getInteger("swingProgressInt");
 
 		if (compound.getCompoundTag("secondItem").hasNoTags())
 		{
@@ -59,9 +70,6 @@ public class OOHData
 			secondItem = new ItemStack(0, 0, 0);
 			secondItem.readFromNBT(compound.getCompoundTag("secondItem"));
 		}
-
-		swingProgress[0] = compound.getFloat("swingProgressA");
-		swingProgress[1] = compound.getFloat("swingProgressB");
 
 		return this;
 	}
@@ -105,7 +113,13 @@ public class OOHData
 
 	public float getSwingProgress (float f)
 	{
-		log(swingProgress[0]);
-		return swingProgress[0];
+		float f1 = this.swingProgress[0] - this.swingProgress[1];
+
+		if (f1 < 0.0F)
+		{
+			++f1;
+		}
+
+		return this.swingProgress[1] + f1 * f;
 	}
 }

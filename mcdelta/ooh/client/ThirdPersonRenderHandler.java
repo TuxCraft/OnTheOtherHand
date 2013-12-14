@@ -87,17 +87,6 @@ public class ThirdPersonRenderHandler
 
 		try
 		{
-			if (modelBipedMain == null)
-			{
-				Field fi1 = renderer.getClass().getDeclaredField("modelBipedMain");
-				fi1.setAccessible(true);
-				modelBipedMain = (ModelBiped) fi1.get(renderer);
-
-				Field fi2 = renderer.getClass().getDeclaredField("modelArmorChestplate");
-				fi2.setAccessible(true);
-				modelArmorChestplate = (ModelBiped) fi2.get(renderer);
-			}
-
 			if (renderManager == null)
 			{
 				Field fi1 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
