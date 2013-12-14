@@ -85,7 +85,7 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (data.swinging)
 						{
-							//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
+							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
 						}
 					}
 				}
