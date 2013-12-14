@@ -9,7 +9,7 @@ import static mcdelta.ooh.OOH.*;
 public class OOHData
 {
 	public float[]	 swingProgress	= new float[2];
-	public boolean	 doubleEngaged;
+	public boolean	 doubleEngaged = true;
 	public ItemStack	secondItem;
 
 
