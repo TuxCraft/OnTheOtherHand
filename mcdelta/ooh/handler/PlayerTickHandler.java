@@ -7,11 +7,15 @@ import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
+import mcdelta.ooh.network.PacketGetData;
 import mcdelta.ooh.network.PacketSetData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.PacketDispatcher;
+
+import static mcdelta.ooh.OOH.*;
 
 public class PlayerTickHandler implements ITickHandler
 {
@@ -51,7 +55,7 @@ public class PlayerTickHandler implements ITickHandler
 			
 			else
 			{
-				
+				PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketGetData(player, Minecraft.getMinecraft().thePlayer)));
 			}
 		}
 	}

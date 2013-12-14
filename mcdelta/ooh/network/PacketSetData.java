@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
 import static mcdelta.ooh.OOH.*;
@@ -18,27 +19,50 @@ public class PacketSetData extends PacketOOH
 
 	private int	           entityID;
 	private NBTTagCompound	tagCompound;
+	private boolean	       sendOutData;
 
 
 
 
 	public PacketSetData ( )
 	{
-		super(EnumPacketTypes.UPDATE_OOHDATA);
+		super(EnumPacketTypes.OOH_DATA_SET);
 	}
+
+
+
 
 	public PacketSetData (Entity entity, OOHData data)
 	{
-		this(entity.entityId, data);
+		this(entity.entityId, data.writeToNBT(new NBTTagCompound()), false);
 	}
+
+
+
+
+	public PacketSetData (Entity entity, OOHData data, boolean b)
+	{
+		this(entity.entityId, data.writeToNBT(new NBTTagCompound()), b);
+	}
+
+
 
 
 	public PacketSetData (int id, OOHData data)
 	{
-		super(EnumPacketTypes.UPDATE_OOHDATA);
+		this(id, data.writeToNBT(new NBTTagCompound()), false);
+	}
+
+
+
+
+	public PacketSetData (int id, NBTTagCompound data, boolean b)
+	{
+		super(EnumPacketTypes.OOH_DATA_SET);
 
 		entityID = id;
-		tagCompound = data.writeToNBT(new NBTTagCompound());
+		tagCompound = data;
+		sendOutData = b;
 	}
 
 
@@ -49,6 +73,7 @@ public class PacketSetData extends PacketOOH
 	{
 		data.writeInt(entityID);
 		writeNBTTagCompound(tagCompound, data);
+		data.writeBoolean(sendOutData);
 	}
 
 
@@ -59,6 +84,7 @@ public class PacketSetData extends PacketOOH
 	{
 		entityID = data.readInt();
 		tagCompound = readNBTTagCompound(data);
+		sendOutData = data.readBoolean();
 	}
 
 
@@ -71,6 +97,11 @@ public class PacketSetData extends PacketOOH
 		Entity entity = player.worldObj.getEntityByID(entityID);
 		OOHData data = new OOHData();
 		OOHData.setOOHData(entity, data.readFromNBT(tagCompound));
+
+		if (sendOutData)
+		{
+			PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(entityID, tagCompound, false)));
+		}
 	}
 
 }

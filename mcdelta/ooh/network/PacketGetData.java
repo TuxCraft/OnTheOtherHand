@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
 import static mcdelta.ooh.OOH.*;
@@ -16,8 +17,8 @@ import static mcdelta.ooh.OOH.*;
 public class PacketGetData extends PacketOOH
 {
 
-	private int	           entityID;
-	private NBTTagCompound	tagCompound;
+	private int	entityInQuestion;
+	private int	playerID;
 
 
 
@@ -27,18 +28,23 @@ public class PacketGetData extends PacketOOH
 		super(EnumPacketTypes.OOH_DATA_GET);
 	}
 
-	public PacketGetData (Entity entity, OOHData data)
+
+
+
+	public PacketGetData (Entity entity, Entity entity2)
 	{
-		this(entity.entityId, data);
+		this(entity.entityId, entity2.entityId);
 	}
 
 
-	public PacketGetData (int id, OOHData data)
+
+
+	public PacketGetData (int i1, int i2)
 	{
 		super(EnumPacketTypes.OOH_DATA_GET);
 
-		entityID = id;
-		tagCompound = data.writeToNBT(new NBTTagCompound());
+		entityInQuestion = i1;
+		playerID = i2;
 	}
 
 
@@ -47,8 +53,8 @@ public class PacketGetData extends PacketOOH
 	@Override
 	public void writeData (DataOutputStream data) throws IOException
 	{
-		data.writeInt(entityID);
-		writeNBTTagCompound(tagCompound, data);
+		data.writeInt(entityInQuestion);
+		data.writeInt(playerID);
 	}
 
 
@@ -57,8 +63,8 @@ public class PacketGetData extends PacketOOH
 	@Override
 	public void readData (DataInputStream data) throws IOException
 	{
-		entityID = data.readInt();
-		tagCompound = readNBTTagCompound(data);
+		entityInQuestion = data.readInt();
+		playerID = data.readInt();
 	}
 
 
@@ -68,9 +74,13 @@ public class PacketGetData extends PacketOOH
 	public void execute (INetworkManager manager, Player playerParam)
 	{
 		EntityPlayer player = (EntityPlayer) playerParam;
-		Entity entity = player.worldObj.getEntityByID(entityID);
-		OOHData data = new OOHData();
-		OOHData.setOOHData(entity, data.readFromNBT(tagCompound));
+		EntityPlayer thePlayer = (EntityPlayer) player.worldObj.getEntityByID(playerID);
+		Entity entity = player.worldObj.getEntityByID(entityInQuestion);
+
+		if (isServer())
+		{
+			PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketSetData(entity, OOHData.getOOHData(entity))), (Player) thePlayer);
+		}
 	}
 
 }

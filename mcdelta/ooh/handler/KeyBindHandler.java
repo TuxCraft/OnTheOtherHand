@@ -56,7 +56,7 @@ public class KeyBindHandler extends KeyHandler
 			}
 			
 			OOHData.setOOHData(player, data);
-			PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
+			PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
 		}
 	}
 
