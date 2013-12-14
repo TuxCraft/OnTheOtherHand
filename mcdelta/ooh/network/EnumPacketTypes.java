@@ -10,8 +10,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 public enum EnumPacketTypes
 {
 	OOH_DATA_SET(PacketSetData.class),
-	OOH_DATA_GET(PacketGetData.class),
-	SWING_ARM(PacketSwingArm.class);
+	OOH_DATA_GET(PacketGetData.class);
 
 	public Class<? extends PacketOOH>	clazz;
 

@@ -134,11 +134,7 @@ public class OOHData
 
 	public void swingArm (EntityPlayer player)
 	{
-		log("asd");
-		
-		
-			this.swingProgressInt = -1;
-			this.swinging = true;
-		
+		this.swingProgressInt = -1;
+		this.swinging = true;
 	}
 }

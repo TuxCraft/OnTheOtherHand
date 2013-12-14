@@ -1,13 +1,15 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.*;
+import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
+import static mcdelta.ooh.OOH.idMetaDamageMatch;
+import static mcdelta.ooh.OOH.isClient;
+import static mcdelta.ooh.OOH.isServer;
 
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
 import mcdelta.ooh.network.PacketSetData;
-import mcdelta.ooh.network.PacketSwingArm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
@@ -20,6 +22,7 @@ public class PlayerTickHandler implements ITickHandler
 {
 	private KeyBinding	leftClick;
 	private KeyBinding	rightClick;
+	private int	       rightHeldTime	= 0;
 
 
 
@@ -67,7 +70,7 @@ public class PlayerTickHandler implements ITickHandler
 							rightClick = settings.keyBindUseItem;
 						}
 
-						if (rightClick.pressed && player.username == Minecraft.getMinecraft().thePlayer.username)
+						if (rightHeldTime == 1 && player.username == Minecraft.getMinecraft().thePlayer.username)
 						{
 							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
 							{
@@ -77,16 +80,22 @@ public class PlayerTickHandler implements ITickHandler
 							}
 						}
 
-						if (data.startSwing)
+						if (data.startSwing && rightHeldTime == 1)
 						{
-							if (!data.swinging || data.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || data.swingProgressInt < 0)
-							{
-								data.swingArm(player);
-							}
+							data.swingArm(player);
 
 							data.startSwing = false;
 							OOHData.setOOHData(player, data);
 							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
+						}
+
+						if (rightClick.pressed)
+						{
+							rightHeldTime++;
+						}
+						else
+						{
+							rightHeldTime = 0;
 						}
 
 						updateArmSwing(player, data);
@@ -126,8 +135,6 @@ public class PlayerTickHandler implements ITickHandler
 		}
 
 		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
-
-		// log(data.swingProgress[0]);
 	}
 
 
