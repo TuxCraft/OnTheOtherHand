@@ -131,14 +131,10 @@ public class PlayerTickHandler implements ITickHandler
 								player.inventory.currentItem = 8;
 								if (click(player, data.secondItem, 1))
 								{
-									player.inventory.currentItem = 0;
 									data.startSwing = true;
 									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 								}
-								else
-								{
-									player.inventory.currentItem = 0;
-								}
+								player.inventory.currentItem = 0;
 							}
 
 							if (leftHeldTime == 1)
@@ -210,7 +206,9 @@ public class PlayerTickHandler implements ITickHandler
 				int side = target.sideHit;
 
 				boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
-				if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec))
+				boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
+
+				if (result && bool)
 				{
 					if (stack.stackSize == 0)
 					{
@@ -249,8 +247,8 @@ public class PlayerTickHandler implements ITickHandler
 
 		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
 
-		// log(data.swinging + " " + data.swingProgress[0] + " " +
-		// data.swingProgressInt);
+		if (data.swinging)
+			log(data.swinging);
 	}
 
 
