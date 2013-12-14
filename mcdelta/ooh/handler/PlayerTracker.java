@@ -29,6 +29,10 @@ public class PlayerTracker implements IPlayerTracker
 	@Override
 	public void onPlayerLogout (EntityPlayer player)
 	{
+		OOHData data = OOHData.getOOHData(player);
+		data.doubleEngaged = false;
+		
+		PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, data)));
 	}
 
 

@@ -28,7 +28,8 @@ public class PlayerTickHandler implements ITickHandler
 	private KeyBinding	key;
 	private int	       rightHeldTime	= 0;
 	private int	       leftHeldTime	 = 0;
-	private int	       cooldown	     = 0;
+	private int	       cooldownRight	= 0;
+	private int	       cooldownLeft	 = 0;
 
 
 
@@ -48,7 +49,7 @@ public class PlayerTickHandler implements ITickHandler
 					if (isClient())
 					{
 						GameSettings settings = Minecraft.getMinecraft().gameSettings;
-						
+
 						if (leftClick == null)
 						{
 							leftClick = settings.keyBindAttack;
@@ -56,11 +57,9 @@ public class PlayerTickHandler implements ITickHandler
 
 							key = new KeyBinding("nope", 70);
 						}
-						
+
 						settings.keyBindAttack = key;
 						settings.keyBindUseItem = key;
-						
-						//log(settings.keyBindAttack);
 					}
 				}
 			}
@@ -112,14 +111,19 @@ public class PlayerTickHandler implements ITickHandler
 					}
 
 					if (isClient())
-					{	
+					{
 						data.swingProgress[1] = data.swingProgress[0];
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
-							if (cooldown != 0)
+							if (cooldownRight != 0)
 							{
-								cooldown--;
+								cooldownRight--;
+							}
+
+							if (cooldownLeft != 0)
+							{
+								cooldownLeft--;
 							}
 
 							if (rightClick.pressed)
@@ -140,9 +144,9 @@ public class PlayerTickHandler implements ITickHandler
 								leftHeldTime = 0;
 							}
 
-							if (((Minecraft.getMinecraft().objectMouseOver == null) ? rightHeldTime == 1 : rightHeldTime >= 1) && cooldown == 0)
+							if (((Minecraft.getMinecraft().objectMouseOver == null) ? rightHeldTime == 1 : rightHeldTime >= 1) && cooldownRight == 0)
 							{
-								cooldown = 4;
+								cooldownRight = 4;
 
 								player.inventory.currentItem = 8;
 								if (click(player, data.secondItem, 1))
@@ -153,8 +157,10 @@ public class PlayerTickHandler implements ITickHandler
 								player.inventory.currentItem = 0;
 							}
 
-							if (leftHeldTime == 1)
+							if (((Minecraft.getMinecraft().objectMouseOver == null) ? leftHeldTime == 1 : leftHeldTime >= 1) && cooldownLeft == 0)
 							{
+								cooldownLeft = 4;
+
 								if (click(player, player.getCurrentEquippedItem(), 1))
 								{
 									player.swingItem();

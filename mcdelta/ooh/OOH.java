@@ -26,6 +26,11 @@ import cpw.mods.fml.relauncher.Side;
 { OOH.modid }, packetHandler = PacketHandler.class)
 public class OOH
 {
+	// TODO
+	// - wierd click after disengaging dual wield
+	// - right arm still renders at times
+	// - doesn't swing @ times
+	
 	@Instance (OOH.modid)
 	public static OOH	       instance;
 
