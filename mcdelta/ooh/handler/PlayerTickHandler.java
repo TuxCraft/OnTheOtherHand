@@ -3,6 +3,7 @@ package mcdelta.ooh.handler;
 import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
 import static mcdelta.ooh.OOH.isClient;
 import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.log;
 
 import java.util.EnumSet;
 
@@ -14,6 +15,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -148,43 +150,51 @@ public class PlayerTickHandler implements ITickHandler
 							// if (((Minecraft.getMinecraft().objectMouseOver ==
 							// null) ? rightHeldTime == 1 : rightHeldTime >= 1)
 							// && cooldownRight == 0)
-							if (rightHeldTime >= 1 && cooldownRight == 0)
+							if (rightHeldTime >= 1)
 							{
-								cooldownRight = 4;
-
-								int i = data.secondItem.getItem() instanceof ItemTool ? 1 : 0;
+								int i = data.secondItem.getItem() != null && (data.secondItem.getItem() instanceof ItemTool || data.secondItem.getItem() instanceof ItemSword) ? 1 : 0;
 
 								player.inventory.currentItem = 8;
-								if (click(player, i))
+
+								if (cooldownRight == 0)
 								{
-									data.startSwing = true;
-									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+									cooldownRight = 4;
+
+									if (click(player, i))
+									{
+										data.startSwing = true;
+										PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+									}
 								}
-								
-								if(i == 1)
+
+								if (i == 1)
 								{
-									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && rightClick.pressed && Minecraft.getMinecraft().inGameHasFocus);
+									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
+
 								player.inventory.currentItem = 0;
 							}
 
 							// if (((Minecraft.getMinecraft().objectMouseOver ==
 							// null) ? leftHeldTime == 1 : leftHeldTime >= 1) &&
 							// cooldownLeft == 0)
-							if (leftHeldTime >= 1 && cooldownLeft == 0)
+							if (leftHeldTime >= 1)
 							{
-								cooldownLeft = 4;
+								int i = player.getCurrentEquippedItem() != null && (player.getCurrentEquippedItem().getItem() instanceof ItemTool || player.getCurrentEquippedItem().getItem() instanceof ItemSword) ? 1 : 0;
 
-								int i = player.getCurrentEquippedItem().getItem() instanceof ItemTool ? 1 : 0;
-
-								if (click(player, i))
+								if (cooldownLeft == 0)
 								{
-									player.swingItem();
+									cooldownLeft = 4;
+
+									if (click(player, i))
+									{
+										player.swingItem();
+									}
 								}
-								
-								if(i == 1)
+
+								if (i == 1)
 								{
-									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && leftClick.pressed && Minecraft.getMinecraft().inGameHasFocus);
+									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
 							}
 						}
@@ -219,25 +229,21 @@ public class PlayerTickHandler implements ITickHandler
 
 	private void sendClickBlockToController (int par1, boolean par2)
 	{
-		if (par1 != 0)
+		if (par2 && Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE && par1 == 0)
 		{
-			if (par2 && Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE && par1 == 0)
-			{
-				int j = Minecraft.getMinecraft().objectMouseOver.blockX;
-				int k = Minecraft.getMinecraft().objectMouseOver.blockY;
-				int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
-				Minecraft.getMinecraft().playerController.onPlayerDamageBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
+			int j = Minecraft.getMinecraft().objectMouseOver.blockX;
+			int k = Minecraft.getMinecraft().objectMouseOver.blockY;
+			int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
+			Minecraft.getMinecraft().playerController.onPlayerDamageBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
 
-				if (Minecraft.getMinecraft().thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
-				{
-					Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(j, k, l, Minecraft.getMinecraft().objectMouseOver);
-					Minecraft.getMinecraft().thePlayer.swingItem();
-				}
-			}
-			else
+			if (Minecraft.getMinecraft().thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
 			{
-				Minecraft.getMinecraft().playerController.resetBlockRemoving();
+				Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(j, k, l, Minecraft.getMinecraft().objectMouseOver);
 			}
+		}
+		else
+		{
+			Minecraft.getMinecraft().playerController.resetBlockRemoving();
 		}
 	}
 
@@ -317,7 +323,7 @@ public class PlayerTickHandler implements ITickHandler
 			}
 		}
 
-		return false;
+		return click == 1;
 	}
 
 
