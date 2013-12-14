@@ -3,8 +3,8 @@ package mcdelta.ooh.handler;
 import static mcdelta.ooh.OOH.getArmSwingAnimationEnd;
 import static mcdelta.ooh.OOH.isClient;
 import static mcdelta.ooh.OOH.isServer;
-import static mcdelta.ooh.OOH.log;
 
+import java.lang.reflect.Method;
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
@@ -38,7 +38,33 @@ public class PlayerTickHandler implements ITickHandler
 	@Override
 	public void tickStart (EnumSet<TickType> type, Object... tickData)
 	{
+		if (type.contains(TickType.PLAYER))
+		{
+			EntityPlayer player = (EntityPlayer) tickData[0];
+			OOHData data = OOHData.getOOHData(player);
 
+			if (data != null)
+			{
+				if (data.doubleEngaged)
+				{
+					if (isClient())
+					{
+						GameSettings settings = Minecraft.getMinecraft().gameSettings;
+						
+						if (leftClick == null)
+						{
+							leftClick = settings.keyBindAttack;
+							rightClick = settings.keyBindUseItem;
+
+							key = new KeyBinding("nope", 0);
+						}
+						
+						settings.keyBindAttack = key;
+						settings.keyBindUseItem = key;
+					}
+				}
+			}
+		}
 	}
 
 
@@ -86,21 +112,8 @@ public class PlayerTickHandler implements ITickHandler
 					}
 
 					if (isClient())
-					{
-						GameSettings settings = Minecraft.getMinecraft().gameSettings;
-
-						settings.keyBindAttack = key;
-						settings.keyBindUseItem = key;
-						
+					{	
 						data.swingProgress[1] = data.swingProgress[0];
-
-						if (leftClick == null)
-						{
-							leftClick = settings.keyBindAttack;
-							rightClick = settings.keyBindUseItem;
-
-							key = new KeyBinding("nope", 0);
-						}
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
