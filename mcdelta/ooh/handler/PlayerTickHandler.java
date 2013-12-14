@@ -1,25 +1,17 @@
 package mcdelta.ooh.handler;
 
+import static mcdelta.ooh.OOH.idMetaDamageMatch;
+import static mcdelta.ooh.OOH.isServer;
+
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
-import mcdelta.ooh.network.PacketOOHData;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.settings.KeyBinding;
+import mcdelta.ooh.network.PacketSetData;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
-
-import static mcdelta.ooh.OOH.*;
 
 public class PlayerTickHandler implements ITickHandler
 {
@@ -51,12 +43,15 @@ public class PlayerTickHandler implements ITickHandler
 						{
 							data.secondItem = player.inventory.getStackInSlot(8);
 							OOHData.setOOHData(player, data);
-							PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))), (Player) player);
+							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
 						}
 					}
-					
-					PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))));
 				}
+			}
+			
+			else
+			{
+				
 			}
 		}
 	}

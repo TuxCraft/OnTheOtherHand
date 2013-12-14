@@ -53,7 +53,7 @@ public class ThirdPersonRenderHandler
 			EntityPlayer player = event.entityPlayer;
 			OOHData data = OOHData.getOOHData(player);
 			RenderPlayer renderer = event.renderer;
-
+			
 			Field fi1 = renderer.getClass().getDeclaredField("modelBipedMain");
 			fi1.setAccessible(true);
 			modelBipedMain = (ModelBiped) fi1.get(renderer);
@@ -61,12 +61,6 @@ public class ThirdPersonRenderHandler
 			Field fi2 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
 			fi2.setAccessible(true);
 			renderManager = (RenderManager) fi2.get(renderer);
-
-			if(data != null)
-			{
-				GL11.glColor3f(0, 0, 0);
-				modelBipedMain.bipedHead.render(0.0625F);
-			}
 			
 			if (data != null && data.doubleEngaged)
 			{
