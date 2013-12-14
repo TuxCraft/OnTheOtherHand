@@ -124,7 +124,7 @@ public class PlayerTickHandler implements ITickHandler
 								leftHeldTime = 0;
 							}
 
-							if (rightHeldTime == 1 && cooldown == 0)
+							if (rightHeldTime >= 1 && cooldown == 0)
 							{
 								cooldown = 4;
 
@@ -179,7 +179,7 @@ public class PlayerTickHandler implements ITickHandler
 
 
 
-	private boolean click (EntityPlayer player, ItemStack stack, int i)
+	private boolean click (EntityPlayer player, ItemStack stack, int click)
 	{
 		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
 
@@ -198,25 +198,38 @@ public class PlayerTickHandler implements ITickHandler
 
 		else
 		{
-			if (target.typeOfHit == EnumMovingObjectType.TILE)
+			switch (target.typeOfHit)
 			{
-				int x = target.blockX;
-				int y = target.blockY;
-				int z = target.blockZ;
-				int side = target.sideHit;
+				case TILE:
+					
+					int x = target.blockX;
+					int y = target.blockY;
+					int z = target.blockZ;
+					int side = target.sideHit;
 
-				boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
-				boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
+					boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
+					boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
 
-				if (result && bool)
-				{
-					if (stack.stackSize == 0)
+					if (result && bool)
 					{
-						stack = null;
+						if (stack.stackSize == 0)
+						{
+							stack = null;
+						}
+
+						return true;
 					}
 
-					return true;
-				}
+					break;
+					
+				case ENTITY:
+					
+					if (Minecraft.getMinecraft().playerController.func_78768_b(player, target.entityHit))
+					{
+						return true;
+					}
+					
+					break;
 			}
 		}
 
@@ -246,9 +259,6 @@ public class PlayerTickHandler implements ITickHandler
 		}
 
 		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
-
-		if (data.swinging)
-			log(data.swinging);
 	}
 
 
