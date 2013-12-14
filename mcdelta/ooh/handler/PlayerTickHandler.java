@@ -43,6 +43,12 @@ public class PlayerTickHandler implements ITickHandler
 
 			if (data != null)
 			{
+				data.swinging = false;
+				data.swingProgressInt = 0;
+				data.swingProgress = new float[]
+				{ 0, 0 };
+				OOHData.setOOHData(player, data);
+				
 				if (data.doubleEngaged)
 				{
 					if (isServer())
