@@ -87,12 +87,15 @@ public class PlayerTickHandler implements ITickHandler
 
 					if (isClient())
 					{
+						GameSettings settings = Minecraft.getMinecraft().gameSettings;
+
+						settings.keyBindAttack = key;
+						settings.keyBindUseItem = key;
+						
 						data.swingProgress[1] = data.swingProgress[0];
 
 						if (leftClick == null)
 						{
-							GameSettings settings = Minecraft.getMinecraft().gameSettings;
-
 							leftClick = settings.keyBindAttack;
 							rightClick = settings.keyBindUseItem;
 
@@ -124,7 +127,7 @@ public class PlayerTickHandler implements ITickHandler
 								leftHeldTime = 0;
 							}
 
-							if (rightHeldTime >= 1 && cooldown == 0)
+							if (((Minecraft.getMinecraft().objectMouseOver == null) ? rightHeldTime == 1 : rightHeldTime >= 1) && cooldown == 0)
 							{
 								cooldown = 4;
 
@@ -144,11 +147,6 @@ public class PlayerTickHandler implements ITickHandler
 									player.swingItem();
 								}
 							}
-
-							GameSettings settings = Minecraft.getMinecraft().gameSettings;
-
-							settings.keyBindAttack = key;
-							settings.keyBindUseItem = key;
 						}
 
 						if (data.startSwing)
@@ -201,7 +199,7 @@ public class PlayerTickHandler implements ITickHandler
 			switch (target.typeOfHit)
 			{
 				case TILE:
-					
+
 					int x = target.blockX;
 					int y = target.blockY;
 					int z = target.blockZ;
@@ -221,14 +219,14 @@ public class PlayerTickHandler implements ITickHandler
 					}
 
 					break;
-					
+
 				case ENTITY:
-					
+
 					if (Minecraft.getMinecraft().playerController.func_78768_b(player, target.entityHit))
 					{
 						return true;
 					}
-					
+
 					break;
 			}
 		}
