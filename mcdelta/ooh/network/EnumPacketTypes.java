@@ -62,7 +62,7 @@ public enum EnumPacketTypes
 		packet250.length = data.length;
 		packet250.isChunkDataPacket = false;
 
-		log(packet.getClass().getSimpleName());
+		//log(packet.getClass().getSimpleName());
 		
 		return packet250;
 	}

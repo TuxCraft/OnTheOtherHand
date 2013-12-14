@@ -124,7 +124,7 @@ public class PlayerTickHandler implements ITickHandler
 							{
 								cooldown = 4;
 								
-								if(click(player, data.secondItem, 1))
+								if(click(player, data.secondItem, 1, 8))
 								{
 									data.startSwing = true;
 									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
@@ -133,7 +133,7 @@ public class PlayerTickHandler implements ITickHandler
 							
 							if (leftHeldTime == 1)
 							{
-								if(click(player, player.getCurrentEquippedItem(), 1))
+								if(click(player, player.getCurrentEquippedItem(), 1, 0))
 								{
 									player.swingItem();
 								}
@@ -173,15 +173,15 @@ public class PlayerTickHandler implements ITickHandler
 
 
 
-	private boolean click (EntityPlayer player, ItemStack stack, int i)
-    {
-		log(isClient());
-		stack.useItemRightClick(player.worldObj, player);
+	private boolean click (EntityPlayer player, ItemStack stack, int i, int slot)
+    {	
+		player.inventory.currentItem = slot;
 		
 		if (i != 0) //|| Minecraft.getMinecraft().leftClickCounter <= 0)
         {
             if (i == 0)
             {
+            	player.inventory.currentItem = 0;
                 return true;
             }
 
@@ -230,6 +230,7 @@ public class PlayerTickHandler implements ITickHandler
                     if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().theWorld, stack, j, k, l, i1, Minecraft.getMinecraft().objectMouseOver.hitVec))
                     {
                         flag = false;
+                        player.inventory.currentItem = 0;
                         return true;
                     }
 
@@ -254,6 +255,7 @@ public class PlayerTickHandler implements ITickHandler
             }
         }
 		
+		player.inventory.currentItem = 0;
 		return false;
     }
 
