@@ -192,7 +192,7 @@ public class PlayerTickHandler implements ITickHandler
 		{
 			if (target.typeOfHit == EnumMovingObjectType.TILE)
 			{
-
+				return true;
 			}
 		}
 
@@ -208,7 +208,6 @@ public class PlayerTickHandler implements ITickHandler
 				boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
 				if (result && Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec))
 				{
-					log("hi");
 					if (stack.stackSize == 0)
 					{
 						stack = null;
