@@ -40,21 +40,27 @@ public class PlayerTickHandler implements ITickHandler
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
 			OOHData data = OOHData.getOOHData(player);
-			
-			if (data.doubleEngaged)
+
+			if (data != null)
 			{
-				if (isServer())
+				if (data.doubleEngaged)
 				{
-					if (!idMetaDamageMatch(data.secondItem, player.inventory.getStackInSlot(8)))
+					if (isServer())
 					{
-						data.secondItem = player.inventory.getStackInSlot(8);
-						OOHData.setOOHData(player, data);
-						PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))), (Player) player);
+						if (!idMetaDamageMatch(data.secondItem, player.inventory.getStackInSlot(8)))
+						{
+							data.secondItem = player.inventory.getStackInSlot(8);
+							OOHData.setOOHData(player, data);
+							PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))), (Player) player);
+						}
 					}
 				}
+
+				if (Minecraft.getMinecraft().thePlayer.username != player.username && data.doubleEngaged)
+				{
+					log(Minecraft.getMinecraft().thePlayer.username + " " + player.username + " " + data);
+				}
 			}
-			
-			log(data);
 		}
 	}
 
