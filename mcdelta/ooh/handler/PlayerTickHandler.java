@@ -200,12 +200,22 @@ public class PlayerTickHandler implements ITickHandler
 	{
 		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
 
-		if (target == null)
-		{
-			return true;
-		}
+		//if (target == null)
+		//{
+			if (Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, (int) player.posX, (int) player.posY, (int) player.posZ, 0, target.hitVec))
+			{
+				if (stack.stackSize == 0)
+				{
+					stack = null;
+				}
 
-		if (stack == null)
+				return true;
+			}
+			
+			return true;
+		//}
+
+		/**if (stack == null)
 		{
 			if (target.typeOfHit == EnumMovingObjectType.TILE)
 			{
@@ -250,7 +260,7 @@ public class PlayerTickHandler implements ITickHandler
 			}
 		}
 
-		return false;
+		return false;*/
 	}
 
 
