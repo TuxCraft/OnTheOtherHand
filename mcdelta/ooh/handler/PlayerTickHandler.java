@@ -67,10 +67,10 @@ public class PlayerTickHandler implements ITickHandler
 							rightClick = settings.keyBindUseItem;
 						}
 
-						if (rightClick.pressed)
+						if (rightClick.pressed && player.username == Minecraft.getMinecraft().thePlayer.username)
 						{
-							//data.swingArm(player);
-							//PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSwingArm(player, true)));
+							data.swingArm(player);
+							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSwingArm(player, true)));
 						}
 
 						updateArmSwing(player, data);

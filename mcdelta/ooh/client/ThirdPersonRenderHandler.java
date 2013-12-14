@@ -31,7 +31,7 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
+@SideOnly (Side.CLIENT)
 public class ThirdPersonRenderHandler
 {
 	private static final ResourceLocation	RES_ITEM_GLINT	       = new ResourceLocation("textures/misc/enchanted_item_glint.png");
@@ -72,8 +72,11 @@ public class ThirdPersonRenderHandler
 			e.printStackTrace();
 		}
 
-		ItemStack stack = data.doubleEngaged ? data.secondItem : null;
-		modelBipedMain.heldItemLeft = modelArmorChestplate.heldItemLeft = stack == null ? 0 : 1;
+		if (data != null)
+		{
+			ItemStack stack = data.doubleEngaged ? data.secondItem : null;
+			modelBipedMain.heldItemLeft = modelArmorChestplate.heldItemLeft = stack == null ? 0 : 1;
+		}
 	}
 
 
@@ -130,7 +133,7 @@ public class ThirdPersonRenderHandler
 				arm.rotateAngleY -= modelBipedMain.bipedBody.rotateAngleY * 2.0F;
 				arm.rotateAngleZ = -MathHelper.sin(renderSwingProgress(player, event.partialRenderTick) * (float) Math.PI) * -0.4F;
 			}
-			
+
 			try
 			{
 				Class[] param1 = new Class[]
@@ -144,7 +147,7 @@ public class ThirdPersonRenderHandler
 			{
 				e.printStackTrace();
 			}
-			
+
 			arm.render(0.0625F);
 
 			modelBipedMain.bipedLeftArm.showModel = false;
@@ -253,7 +256,7 @@ public class ThirdPersonRenderHandler
 				}
 
 				GL11.glTranslatef(0, 0, 0);
-				
+
 				GL11.glPopMatrix();
 			}
 		}

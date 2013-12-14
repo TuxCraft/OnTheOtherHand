@@ -1,10 +1,13 @@
 package mcdelta.ooh.network;
 
+import static mcdelta.ooh.OOH.log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import mcdelta.ooh.OOHData;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -26,36 +29,11 @@ public class PacketSwingArm extends PacketOOH
 
 
 
-	public PacketSwingArm (EntityPlayer player)
-	{
-		this(player.entityId);
-	}
-
-
-
-
-	public PacketSwingArm (EntityPlayer player, boolean b)
-	{
-		this(player.entityId);
-		this.sendOutData = b;
-	}
-
-
-
-
-	public PacketSwingArm (int i, boolean b)
-	{
-		this(i);
-		this.sendOutData = b;
-	}
-
-
-
-
-	public PacketSwingArm (int i)
+	public PacketSwingArm (Entity player, boolean b)
 	{
 		super(EnumPacketTypes.SWING_ARM);
-		this.entityID = i;
+		this.entityID = player.entityId;
+		this.sendOutData = b;
 	}
 
 
@@ -87,9 +65,11 @@ public class PacketSwingArm extends PacketOOH
 		OOHData data = new OOHData();
 		data.swingArm(entity);
 
+		log(sendOutData);
+
 		if (sendOutData)
 		{
-			PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSwingArm(entityID, false)));
+			PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSwingArm(entity, false)));
 		}
 	}
 }
