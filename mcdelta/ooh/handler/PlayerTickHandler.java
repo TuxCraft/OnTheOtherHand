@@ -20,6 +20,7 @@ public class PlayerTickHandler implements ITickHandler
 	private KeyBinding	leftClick;
 	private KeyBinding	rightClick;
 	private int	       rightHeldTime	= 0;
+	private int	       cooldown	     = 0;
 
 
 
@@ -69,6 +70,11 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
+							if (cooldown != 0)
+							{
+								cooldown--;
+							}
+
 							if (rightClick.pressed)
 							{
 								rightHeldTime++;
@@ -79,8 +85,10 @@ public class PlayerTickHandler implements ITickHandler
 								rightHeldTime = 0;
 							}
 
-							if (rightHeldTime == 1)
+							if (rightHeldTime == 1 && cooldown == 0)
 							{
+								cooldown = 5;
+								
 								data.startSwing = true;
 								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 							}
