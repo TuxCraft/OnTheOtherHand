@@ -40,11 +40,18 @@ public class PlayerTickHandler implements ITickHandler
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
 			OOHData data = OOHData.getOOHData(player);
-			
-			log(data.secondItem.itemID == player.inventory.getStackInSlot(8).itemID);
-			if(data.secondItem.equals(player.inventory.getStackInSlot(8)))
+
+			if (data.doubleEngaged)
 			{
-				
+				if (isServer())
+				{
+					if (!idMetaDamageMatch(data.secondItem, player.inventory.getStackInSlot(8)))
+					{
+						data.secondItem = player.inventory.getStackInSlot(8);
+						OOHData.setOOHData(player, data);
+						PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))), (Player) player);
+					}
+				}
 			}
 		}
 	}
