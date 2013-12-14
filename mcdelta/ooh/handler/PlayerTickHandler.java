@@ -131,10 +131,14 @@ public class PlayerTickHandler implements ITickHandler
 								player.inventory.currentItem = 8;
 								if (click(player, data.secondItem, 1))
 								{
+									player.inventory.currentItem = 0;
 									data.startSwing = true;
 									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 								}
-								player.inventory.currentItem = 0;
+								else
+								{
+									player.inventory.currentItem = 0;
+								}
 							}
 
 							if (leftHeldTime == 1)
@@ -244,8 +248,9 @@ public class PlayerTickHandler implements ITickHandler
 		}
 
 		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
-		
-		//log(data.swinging + " " + data.swingProgress[0] + " " + data.swingProgressInt);
+
+		// log(data.swinging + " " + data.swingProgress[0] + " " +
+		// data.swingProgressInt);
 	}
 
 
