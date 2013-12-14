@@ -7,6 +7,7 @@ import mcdelta.ooh.network.PacketOOHData;
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.common.IPlayerTracker;
 import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 public class PlayerTracker implements IPlayerTracker
 {
@@ -14,12 +15,13 @@ public class PlayerTracker implements IPlayerTracker
 	@Override
 	public void onPlayerLogin (EntityPlayer player)
 	{
-		if(OOHData.getOOHData(player) == null)
+		if (OOHData.getOOHData(player) == null)
 		{
 			log("Adding OOH data to " + player.username);
 			OOHData.setOOHData(player, new OOHData(true, player.inventory.getStackInSlot(8)));
-			PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketOOHData(  )));
 		}
+
+		PacketDispatcher.sendPacketToPlayer(EnumPacketTypes.populatePacket(new PacketOOHData(player, OOHData.getOOHData(player))), (Player) player);
 	}
 
 

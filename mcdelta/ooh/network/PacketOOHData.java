@@ -11,6 +11,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import cpw.mods.fml.common.network.Player;
 
+import static mcdelta.ooh.OOH.*;
+
 public class PacketOOHData extends PacketOOH
 {
 

@@ -2,7 +2,9 @@ package mcdelta.ooh;
 
 import mcdelta.ooh.handler.PlayerTickHandler;
 import mcdelta.ooh.handler.PlayerTracker;
+import mcdelta.ooh.network.PacketHandler;
 import mcdelta.ooh.proxy.CommonProxy;
+import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -16,7 +18,7 @@ import cpw.mods.fml.relauncher.Side;
 
 @Mod (modid = OOH.modid, useMetadata = true, name = "On the Other Hand", version = "0.1")
 @NetworkMod (clientSideRequired = true, serverSideRequired = false, channels =
-{ OOH.modid })
+{ OOH.modid }, packetHandler = PacketHandler.class)
 public class OOH
 {
 	@Instance (OOH.modid)
@@ -62,5 +64,13 @@ public class OOH
 	public static boolean isServer ()
 	{
 		return FMLCommonHandler.instance().getEffectiveSide().isServer();
+	}
+
+
+
+
+	public static boolean idMetaDamageMatch (ItemStack stack1, ItemStack stack2)
+	{
+		return stack1.itemID == stack2.itemID && stack1.getItemDamage() == stack2.getItemDamage();
 	}
 }

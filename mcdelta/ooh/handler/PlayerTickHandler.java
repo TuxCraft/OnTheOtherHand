@@ -3,6 +3,8 @@ package mcdelta.ooh.handler;
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
+import mcdelta.ooh.network.EnumPacketTypes;
+import mcdelta.ooh.network.PacketOOHData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
@@ -14,6 +16,8 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 import static mcdelta.ooh.OOH.*;
 
@@ -35,8 +39,13 @@ public class PlayerTickHandler implements ITickHandler
 		if (type.contains(TickType.PLAYER))
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
-
-			log(isClient() + " " + OOHData.getOOHData(player));
+			OOHData data = OOHData.getOOHData(player);
+			
+			log(data.secondItem.itemID == player.inventory.getStackInSlot(8).itemID);
+			if(data.secondItem.equals(player.inventory.getStackInSlot(8)))
+			{
+				
+			}
 		}
 	}
 
