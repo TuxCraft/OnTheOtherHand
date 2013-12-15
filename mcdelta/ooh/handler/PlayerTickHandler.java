@@ -11,7 +11,6 @@ import mcdelta.ooh.network.EnumPacketTypes;
 import mcdelta.ooh.network.PacketSetData;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.DestroyBlockProgress;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +19,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import cpw.mods.fml.common.ITickHandler;
@@ -198,9 +198,10 @@ public class PlayerTickHandler implements ITickHandler
 
 										Block block = Block.blocksList[player.worldObj.getBlockId(x, y, z)];
 										int meta = player.worldObj.getBlockMetadata(x, y, z);
-										log(player.getCurrentPlayerStrVsBlock(block, true, meta));
+										float modifier = (stack == null) ? 1 : ForgeHooks.isToolEffective(stack, block, meta) ? 2.5F : 1;
+										float f = (player.getCurrentPlayerStrVsBlock(block, true, meta) * modifier) / 100;
 										
-										currentBlockBreak += 0.05F;
+										currentBlockBreak += f;
 
 										if (currentBlockBreak > 1)
 										{
@@ -217,11 +218,6 @@ public class PlayerTickHandler implements ITickHandler
 								}
 
 								player.inventory.currentItem = orig;
-							}
-							
-							else
-							{
-								currentBlockBreak = 0;
 							}
 
 							if (leftHeldTime >= 1 || cooldownLeft != 0)
@@ -251,8 +247,40 @@ public class PlayerTickHandler implements ITickHandler
 
 								if (i == 1 && ((player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool) || player.getCurrentEquippedItem() == null))
 								{
-									Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = true;
+									MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
+
+									if (target != null)
+									{
+										int x = target.blockX;
+										int y = target.blockY;
+										int z = target.blockZ;
+										int side = target.sideHit;
+
+										Block block = Block.blocksList[player.worldObj.getBlockId(x, y, z)];
+										int meta = player.worldObj.getBlockMetadata(x, y, z);
+										float modifier = (stack == null) ? 1 : ForgeHooks.isToolEffective(stack, block, meta) ? 2.5F : 1;
+										float f = (player.getCurrentPlayerStrVsBlock(block, true, meta) * modifier) / 100;
+										
+										currentBlockBreak += f;
+
+										if (currentBlockBreak > 1)
+										{
+											currentBlockBreak = 0;
+										}
+
+										Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+										
+										if (player.isCurrentToolAdventureModeExempt(x, y, z))
+						                {
+						                    Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(x, y, z, target);
+						                }
+									}
 								}
+							}
+							
+							if(!(repeat ? rightHeldTime >= 1 : rightHeldTime == 1) && !(repeat ? leftHeldTime >= 1 : leftHeldTime == 1))
+							{
+								currentBlockBreak = 0;
 							}
 
 							data.equipProgress[1] = data.equipProgress[0];
