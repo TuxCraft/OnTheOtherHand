@@ -8,19 +8,18 @@ import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
+import mcdelta.ooh.network.PacketBreakBlock;
 import mcdelta.ooh.network.PacketSetData;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.EnumGameType;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
@@ -291,7 +290,7 @@ public class PlayerTickHandler implements ITickHandler
 
 								if (Minecraft.getMinecraft().playerController.onPlayerDestroyBlock(x, y, z, side))
 								{
-
+									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketBreakBlock(player, x, y, z, true)));
 								}
 
 								currentBlockBreak = 0;
@@ -343,7 +342,7 @@ public class PlayerTickHandler implements ITickHandler
 				}
 
 				else
-				{
+				{	
 					OOHData.setOOHData(player, new OOHData(false, player.getCurrentEquippedItem()));
 
 					if (isClient())
