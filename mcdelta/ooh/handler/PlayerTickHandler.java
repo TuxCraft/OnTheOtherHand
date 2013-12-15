@@ -163,7 +163,7 @@ public class PlayerTickHandler implements ITickHandler
 								leftHeldTime = 0;
 							}
 
-							if (repeat ? rightHeldTime >= 1 : rightHeldTime == 1)
+							if (repeat ? rightHeldTime >= 1 : rightHeldTime == 1 || Minecraft.getMinecraft().objectMouseOver != null && rightHeldTime >= 1 && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
 							{
 								int orig = player.inventory.currentItem;
 								player.inventory.currentItem = slot;
@@ -208,6 +208,7 @@ public class PlayerTickHandler implements ITickHandler
 												currentBlockBreak += f;
 
 												Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+												attemptBreakBlock(player);
 											}
 
 											if (player.isCurrentToolAdventureModeExempt(x, y, z))
@@ -268,6 +269,7 @@ public class PlayerTickHandler implements ITickHandler
 												currentBlockBreak += f;
 
 												Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+												attemptBreakBlock(player);
 											}
 
 											if (player.isCurrentToolAdventureModeExempt(x, y, z))
@@ -277,23 +279,6 @@ public class PlayerTickHandler implements ITickHandler
 										}
 									}
 								}
-							}
-
-							MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
-
-							if (currentBlockBreak >= 1F && target != null)
-							{
-								int x = target.blockX;
-								int y = target.blockY;
-								int z = target.blockZ;
-								int side = target.sideHit;
-
-								if (Minecraft.getMinecraft().playerController.onPlayerDestroyBlock(x, y, z, side))
-								{
-									PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketBreakBlock(player, x, y, z, true)));
-								}
-
-								currentBlockBreak = 0;
 							}
 
 							if (!(repeat ? rightHeldTime >= 1 : rightHeldTime == 1) && !(repeat ? leftHeldTime >= 1 : leftHeldTime == 1))
@@ -342,7 +327,7 @@ public class PlayerTickHandler implements ITickHandler
 				}
 
 				else
-				{	
+				{
 					OOHData.setOOHData(player, new OOHData(false, player.getCurrentEquippedItem()));
 
 					if (isClient())
@@ -367,6 +352,29 @@ public class PlayerTickHandler implements ITickHandler
 		if (l2 > 2)
 		{
 			log("TOOK MORE THEN 2 MILLIS: " + l2);
+		}
+	}
+
+
+
+
+	private void attemptBreakBlock (EntityPlayer player)
+	{
+		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
+
+		if (currentBlockBreak >= 1F && target != null)
+		{
+			int x = target.blockX;
+			int y = target.blockY;
+			int z = target.blockZ;
+			int side = target.sideHit;
+
+			if (Minecraft.getMinecraft().playerController.onPlayerDestroyBlock(x, y, z, side))
+			{
+				PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketBreakBlock(player, x, y, z, true)));
+			}
+
+			currentBlockBreak = 0;
 		}
 	}
 

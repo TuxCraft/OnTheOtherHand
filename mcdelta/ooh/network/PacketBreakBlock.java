@@ -4,12 +4,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetworkManager;
-import net.minecraft.world.World;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
 public class PacketBreakBlock extends PacketOOH
@@ -75,11 +72,11 @@ public class PacketBreakBlock extends PacketOOH
 	public void execute (INetworkManager manager, Player playerParam)
 	{
 		EntityPlayer player = (EntityPlayer) playerParam;
-		EntityClientPlayerMP thePlayer = (EntityClientPlayerMP) player.worldObj.getEntityByID(playerID);
-		World world = player.worldObj;
-		Block block = Block.blocksList[world.getBlockId(posX, posY, posZ)];
-		int meta = world.getBlockMetadata(posX, posY, posZ);
+		EntityPlayer thePlayer = (EntityPlayer) player.worldObj.getEntityByID(playerID);
 		
-		block.dropBlockAsItem(world, posX, posY, posZ, meta, 0);
+		if(thePlayer instanceof EntityPlayerMP)
+		{
+			((EntityPlayerMP) thePlayer).theItemInWorldManager.tryHarvestBlock(posX, posY, posZ);
+		}
 	}
 }
