@@ -45,13 +45,15 @@ public class HotbarOverlayHandler
 			if (slot != 8)
 			{
 				Minecraft.getMinecraft().renderEngine.bindTexture(OVERLAY);
-				drawTexturedModalRect(width / 2 - 92 + slot * 20, height - 23, 0, 22, 48, 24);
+				drawTexturedModalRect(width / 2 - 92 - 0 + slot * 20, height - 23, 0, 22, 44, 22);
 			}
 			else
 			{
 				Minecraft.getMinecraft().renderEngine.bindTexture(WIDGITS);
 		        drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 22 - 1, 0, 22, 24, 22);
 			}
+			
+			drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 22 - 1, 0, 22, 50, 22);
 
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);

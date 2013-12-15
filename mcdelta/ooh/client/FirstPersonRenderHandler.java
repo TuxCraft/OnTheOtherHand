@@ -5,6 +5,7 @@ import static mcdelta.ooh.OOH.*;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.FIRST_PERSON_MAP;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import mcdelta.ooh.OOH;
@@ -64,57 +65,61 @@ public class FirstPersonRenderHandler
 	{
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		OOHData data = OOHData.getOOHData(player);
-		
+
 		if (data != null && isClient() && data.doubleEngaged)
 		{
 			EntityRenderer renderer = Minecraft.getMinecraft().entityRenderer;
 
 			try
 			{
-				Field fi1 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78503_V" : "cameraZoom");
-				fi1.setAccessible(true);
-				cameraZoom = (Double) fi1.get(renderer);
-
-				Field fi2 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78532_q" : "debugViewDirection");
-				fi2.setAccessible(true);
-				debugViewDirection = (Integer) fi2.get(renderer);
-
-				Field fi3 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78502_W" : "cameraYaw");
-				fi3.setAccessible(true);
-				cameraYaw = (Double) fi3.get(renderer);
-
-				Field fi4 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78509_X" : "cameraPitch");
-				fi4.setAccessible(true);
-				cameraPitch = (Double) fi4.get(renderer);
-
-				Field fi5 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78530_s" : "farPlaneDistance");
-				fi5.setAccessible(true);
-				farPlaneDistance = (Float) fi5.get(renderer);
-
-				Class[] param1 = new Class[]
-				{ Float.TYPE, Boolean.TYPE };
-				getFOVModifier = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78481_a" : "getFOVModifier", param1);
-				getFOVModifier.setAccessible(true);
-
-				Class[] param2 = new Class[]
-				{ Float.TYPE };
-				hurtCameraEffect = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78482_e" : "hurtCameraEffect", param2);
-				hurtCameraEffect.setAccessible(true);
-
-				Class[] param3 = new Class[]
-				{ Float.TYPE };
-				setupViewBobbing = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78475_f" : "setupViewBobbing", param2);
-				setupViewBobbing.setAccessible(true);
-
-				if (cameraZoom == 1.0D)
+				if (hurtCameraEffect == null)
 				{
-					GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-					renderHand(renderer, event.partialTicks);
+					Field fi1 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78503_V" : "cameraZoom");
+					fi1.setAccessible(true);
+					cameraZoom = (Double) fi1.get(renderer);
+
+					Field fi2 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78532_q" : "debugViewDirection");
+					fi2.setAccessible(true);
+					debugViewDirection = (Integer) fi2.get(renderer);
+
+					Field fi3 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78502_W" : "cameraYaw");
+					fi3.setAccessible(true);
+					cameraYaw = (Double) fi3.get(renderer);
+
+					Field fi4 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78509_X" : "cameraPitch");
+					fi4.setAccessible(true);
+					cameraPitch = (Double) fi4.get(renderer);
+
+					Field fi5 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78530_s" : "farPlaneDistance");
+					fi5.setAccessible(true);
+					farPlaneDistance = (Float) fi5.get(renderer);
+
+					Class[] param1 = new Class[]
+					{ Float.TYPE, Boolean.TYPE };
+					getFOVModifier = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78481_a" : "getFOVModifier", param1);
+					getFOVModifier.setAccessible(true);
+
+					Class[] param2 = new Class[]
+					{ Float.TYPE };
+					hurtCameraEffect = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78482_e" : "hurtCameraEffect", param2);
+					hurtCameraEffect.setAccessible(true);
+
+					Class[] param3 = new Class[]
+					{ Float.TYPE };
+					setupViewBobbing = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78475_f" : "setupViewBobbing", param2);
+					setupViewBobbing.setAccessible(true);
+
 				}
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
+			}
+
+			if (cameraZoom == 1.0D)
+			{
+				GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+				renderHand(renderer, event.partialTicks);
 			}
 		}
 	}
@@ -122,7 +127,7 @@ public class FirstPersonRenderHandler
 
 
 
-	private void renderHand (EntityRenderer renderer, float partialTicks) throws Exception
+	private void renderHand (EntityRenderer renderer, float partialTicks)
 	{
 		if (renderer.debugViewDirection <= 0)
 		{
@@ -141,8 +146,15 @@ public class FirstPersonRenderHandler
 				GL11.glScaled(cameraZoom, cameraZoom, 1.0D);
 			}
 
-			Project.gluPerspective((Float) getFOVModifier.invoke(renderer, new Object[]
-			{ partialTicks, false }), (float) Minecraft.getMinecraft().displayWidth / (float) Minecraft.getMinecraft().displayHeight, 0.05F, farPlaneDistance * 2.0F);
+			try
+			{
+				Project.gluPerspective((Float) getFOVModifier.invoke(renderer, new Object[]
+				{ partialTicks, false }), (float) Minecraft.getMinecraft().displayWidth / (float) Minecraft.getMinecraft().displayHeight, 0.05F, farPlaneDistance * 2.0F);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 
 			if (Minecraft.getMinecraft().playerController.enableEverythingIsScrewedUpMode())
 			{
@@ -159,19 +171,41 @@ public class FirstPersonRenderHandler
 			}
 
 			GL11.glPushMatrix();
-			hurtCameraEffect.invoke(renderer, new Object[]
-			{ partialTicks });
+			try
+			{
+				hurtCameraEffect.invoke(renderer, new Object[]
+				{ partialTicks });
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 
 			if (Minecraft.getMinecraft().gameSettings.viewBobbing)
 			{
-				setupViewBobbing.invoke(renderer, new Object[]
-				{ partialTicks });
+				try
+				{
+					setupViewBobbing.invoke(renderer, new Object[]
+					{ partialTicks });
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 
 			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && !Minecraft.getMinecraft().renderViewEntity.isPlayerSleeping() && !Minecraft.getMinecraft().gameSettings.hideGUI && !Minecraft.getMinecraft().playerController.enableEverythingIsScrewedUpMode())
 			{
 				renderer.enableLightmap((double) partialTicks);
-				renderItemInFirstPerson(renderer.itemRenderer, partialTicks);
+				try
+				{
+					renderItemInFirstPerson(renderer.itemRenderer, partialTicks);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+
 				renderer.disableLightmap((double) partialTicks);
 			}
 
@@ -180,14 +214,28 @@ public class FirstPersonRenderHandler
 			if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0 && !Minecraft.getMinecraft().renderViewEntity.isPlayerSleeping())
 			{
 				renderer.itemRenderer.renderOverlays(partialTicks);
-				hurtCameraEffect.invoke(renderer, new Object[]
-				{ partialTicks });
+				try
+				{
+					hurtCameraEffect.invoke(renderer, new Object[]
+					{ partialTicks });
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 
 			if (Minecraft.getMinecraft().gameSettings.viewBobbing)
 			{
-				setupViewBobbing.invoke(renderer, new Object[]
-				{ partialTicks });
+				try
+				{
+					setupViewBobbing.invoke(renderer, new Object[]
+					{ partialTicks });
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -334,7 +382,7 @@ public class FirstPersonRenderHandler
 		{
 			GL11.glPushMatrix();
 			f12 = 0.8F;
-			
+
 			GL11.glScalef(-1.0F, 1.0F, 1.0F);
 
 			if (entityclientplayermp.getItemInUseCount() > 0)
@@ -362,7 +410,7 @@ public class FirstPersonRenderHandler
 				f7 = data.getSwingProgress(partialTicks);
 				f8 = MathHelper.sin(f7 * (float) Math.PI);
 				f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
-				GL11.glTranslatef(-f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float)Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
+				GL11.glTranslatef(-f6 * 0.4F, MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI * 2.0F) * 0.2F, -f8 * 0.2F);
 			}
 
 			GL11.glTranslatef(0.7F * f12, -0.65F * f12 - (1.0F - f1) * 0.6F, -0.9F * f12);
@@ -372,8 +420,8 @@ public class FirstPersonRenderHandler
 			f8 = MathHelper.sin(f7 * f7 * (float) Math.PI);
 			f6 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
 			GL11.glRotatef(-f8 * 20.0F, 0.0F, 1.0F, 0.0F);
-            GL11.glRotatef(-f6 * 20.0F, 0.0F, 0.0F, 1.0F);
-            GL11.glRotatef(-f6 * 80.0F, 1.0F, 0.0F, 0.0F);
+			GL11.glRotatef(-f6 * 20.0F, 0.0F, 0.0F, 1.0F);
+			GL11.glRotatef(-f6 * 80.0F, 1.0F, 0.0F, 0.0F);
 			f9 = 0.4F;
 			GL11.glScalef(f9, f9, f9);
 			float f13;
@@ -426,10 +474,10 @@ public class FirstPersonRenderHandler
 			{
 				GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
 			}
-			
+
 			GL11.glScalef(1.0F, 1.0F, -1.0F);
 			GL11.glRotatef(270, 0, 1, 0);
-			
+
 			if (itemstack.getItem().requiresMultipleRenderPasses())
 			{
 				renderer.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
