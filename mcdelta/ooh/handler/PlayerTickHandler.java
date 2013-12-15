@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
 import mcdelta.ooh.network.PacketSetData;
+import mcdelta.ooh.network.PacketStartSwing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
@@ -90,39 +91,40 @@ public class PlayerTickHandler implements ITickHandler
 					if (isClient())
 					{
 						data.swingProgress[1] = data.swingProgress[0];
-						
-						int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
-
-						ItemStack stack1 = data.secondItem;
-						ItemStack stack2 = player.inventory.getStackInSlot(slot);
-
-						boolean idsMatch = false;
-						boolean metaMatch = false;
-						boolean sizeMatch = false;
-						boolean bool = stack1 != stack2;
-
-						if (stack1 != null && stack2 != null)
-						{
-							idsMatch = stack1.itemID == stack2.itemID;
-							metaMatch = stack1.getItemDamage() == stack2.getItemDamage();
-							sizeMatch = stack1.stackSize == stack2.stackSize;
-							bool = true;
-						}
-
-						if ((!(idsMatch && metaMatch && sizeMatch) && bool))
-						{
-							data.secondItem = player.inventory.getStackInSlot(slot);
-							data.startSwing = false;
-							data.resetEquippedProgress();
-							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
-						}
-						
-						
-						
-						data.swingProgress[1] = data.swingProgress[0];
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
+							int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
+
+							ItemStack stack1 = data.secondItem;
+							ItemStack stack2 = player.inventory.getStackInSlot(slot);
+
+							boolean idsMatch = false;
+							boolean metaMatch = false;
+							boolean sizeMatch = false;
+							boolean bool = stack1 != stack2;
+
+							if (stack1 != null && stack2 != null)
+							{
+								idsMatch = stack1.itemID == stack2.itemID;
+								metaMatch = stack1.getItemDamage() == stack2.getItemDamage();
+								sizeMatch = stack1.stackSize == stack2.stackSize;
+								bool = true;
+							}
+
+							if ((!(idsMatch && metaMatch && sizeMatch) && bool))
+							{
+								data.secondItem = player.inventory.getStackInSlot(slot);
+								data.startSwing = false;
+								data.resetEquippedProgress();
+								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+							}
+							
+							
+							
+							
+							
+							
 							if (cooldownRight != 0)
 							{
 								cooldownRight--;
@@ -167,7 +169,7 @@ public class PlayerTickHandler implements ITickHandler
 									if (click(player, i, true))
 									{
 										data.startSwing = true;
-										PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+										PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketStartSwing(player)));
 									}
 								}
 
@@ -229,7 +231,7 @@ public class PlayerTickHandler implements ITickHandler
 							data.swingArm(player);
 						}
 
-						updateArmSwing(player, data);
+						data.updateArmSwing(player);
 						OOHData.setOOHData(player, data);
 					}
 				}
@@ -372,31 +374,6 @@ public class PlayerTickHandler implements ITickHandler
 		}
 
 		return false;
-	}
-
-
-
-
-	private void updateArmSwing (EntityPlayer player, OOHData data)
-	{
-		int i = getArmSwingAnimationEnd(player);
-
-		if (data.swinging)
-		{
-			++data.swingProgressInt;
-
-			if (data.swingProgressInt >= i)
-			{
-				data.swingProgressInt = 0;
-				data.swinging = false;
-			}
-		}
-		else
-		{
-			data.swingProgressInt = 0;
-		}
-
-		data.swingProgress[0] = (float) data.swingProgressInt / (float) i;
 	}
 
 

@@ -21,6 +21,7 @@ public class PlayerTracker implements IPlayerTracker
 			log("Adding OOH data to " + player.username);
 			int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 			data = new OOHData(true, player.inventory.getStackInSlot(slot));
+			OOHData.setOOHData(player, data);
 		}
 		
 		else

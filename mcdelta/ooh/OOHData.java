@@ -109,6 +109,11 @@ public class OOHData
 
 	public static void setOOHData (Entity player, OOHData data)
 	{
+		if (player == null)
+		{
+			return;
+		}
+
 		player.getEntityData().setCompoundTag("OOHData", data.writeToNBT(new NBTTagCompound()));
 	}
 
@@ -126,7 +131,7 @@ public class OOHData
 
 	public float getSwingProgress (float f)
 	{
-		float f1 = this.swingProgress[0];
+		float f1 = this.swingProgress[0] - this.swingProgress[1];
 
 		if (f1 < 0.0F)
 		{
@@ -154,9 +159,35 @@ public class OOHData
 
 		if (!this.swinging || this.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || this.swingProgressInt < 0)
 		{
+			log("asdasddsa");
 			this.swingProgressInt = -1;
 			this.swinging = true;
 		}
+	}
+
+
+
+
+	public void updateArmSwing (EntityPlayer player)
+	{
+		int i = getArmSwingAnimationEnd(player);
+
+		if (this.swinging)
+		{
+			++this.swingProgressInt;
+
+			if (this.swingProgressInt >= i)
+			{
+				this.swingProgressInt = 0;
+				this.swinging = false;
+			}
+		}
+		else
+		{
+			this.swingProgressInt = 0;
+		}
+
+		this.swingProgress[0] = (float) this.swingProgressInt / (float) i;
 	}
 
 
