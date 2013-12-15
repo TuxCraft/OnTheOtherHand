@@ -6,6 +6,9 @@ import mcdelta.ooh.handler.PlayerTickHandler;
 import mcdelta.ooh.handler.PlayerTracker;
 import mcdelta.ooh.network.PacketHandler;
 import mcdelta.ooh.proxy.CommonProxy;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -30,7 +33,7 @@ public class OOH
 	// - wierd click after disengaging dual wield
 	// - right arm still renders at times
 	// - doesn't swing @ times
-	
+
 	@Instance (OOH.modid)
 	public static OOH	       instance;
 
@@ -45,17 +48,21 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
-		proxy.registerKeyBinds();
-
-		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
-		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
-		GameRegistry.registerPlayerTracker(new PlayerTracker());
+		/**proxy.registerKeyBinds();
 
 		if (isClient())
 		{
+			GameSettings settings = Minecraft.getMinecraft().gameSettings;
+			settings.keyBindAttack = new KeyBinding("key.attack", -100);
+			settings.keyBindUseItem = new KeyBinding("key.use", -99);
+
 			MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());
 			MinecraftForge.EVENT_BUS.register(new FirstPersonRenderHandler());
 		}
+
+		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
+		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
+		GameRegistry.registerPlayerTracker(new PlayerTracker());*/
 	}
 
 

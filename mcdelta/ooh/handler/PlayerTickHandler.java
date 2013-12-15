@@ -53,7 +53,7 @@ public class PlayerTickHandler implements ITickHandler
 					{
 						GameSettings settings = Minecraft.getMinecraft().gameSettings;
 
-						if (leftClick == null)
+						if (leftClick == null || rightClick == null || key == null)
 						{
 							leftClick = settings.keyBindAttack;
 							rightClick = settings.keyBindUseItem;
@@ -61,8 +61,8 @@ public class PlayerTickHandler implements ITickHandler
 							key = new KeyBinding("nope", 70);
 						}
 
-						settings.keyBindAttack = key;
-						settings.keyBindUseItem = key;
+						//settings.keyBindAttack = key;
+						//settings.keyBindUseItem = key;
 					}
 				}
 			}

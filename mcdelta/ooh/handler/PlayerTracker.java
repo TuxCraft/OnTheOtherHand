@@ -14,12 +14,20 @@ public class PlayerTracker implements IPlayerTracker
 	@Override
 	public void onPlayerLogin (EntityPlayer player)
 	{
-		if (OOHData.getOOHData(player) == null)
+		OOHData data = OOHData.getOOHData(player);
+		
+		if (data == null)
 		{
 			log("Adding OOH data to " + player.username);
-			OOHData.setOOHData(player, new OOHData(true, player.inventory.getStackInSlot(8)));
+			data = new OOHData(true, player.inventory.getStackInSlot(8));
+		}
+		
+		else
+		{
+			data.doubleEngaged = false;
 		}
 
+		OOHData.setOOHData(player, data);
 		PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player))));
 	}
 
