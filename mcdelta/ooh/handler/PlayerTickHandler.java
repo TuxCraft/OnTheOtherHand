@@ -99,7 +99,7 @@ public class PlayerTickHandler implements ITickHandler
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
 							boolean flag = true;
-							
+
 							settings.keyBindAttack.pressed = false;
 
 							int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
@@ -164,8 +164,8 @@ public class PlayerTickHandler implements ITickHandler
 								player.inventory.currentItem = slot;
 
 								ItemStack stack = data.secondItem;
-								int i = stack != null && (stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemSword) ? 1 : 0;
-								
+								int i = stack != null && (stack.getItem() instanceof ItemSword) ? 1 : 0;
+
 								if (cooldownRight == 0)
 								{
 									cooldownRight = 4;
@@ -175,13 +175,13 @@ public class PlayerTickHandler implements ITickHandler
 										data.startSwing = true;
 									}
 								}
-								
-								if (i == 1 && stack != null && stack.getItem() instanceof ItemTool)
-								{
-									sendClickBlockToController(Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
-								}
-								
+
 								player.inventory.currentItem = orig;
+							}
+
+							if (leftHeldTime >= 1 || cooldownLeft != 0)
+							{
+								flag = false;
 							}
 
 							if (repeat ? leftHeldTime >= 1 : leftHeldTime == 1)
@@ -195,13 +195,12 @@ public class PlayerTickHandler implements ITickHandler
 									if (click(player, i, false))
 									{
 										player.swingItem();
-										flag = false;
 									}
 								}
 
 								if (i == 1 && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool)
 								{
-									sendClickBlockToController(Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
+									Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = true;
 								}
 							}
 
@@ -227,10 +226,10 @@ public class PlayerTickHandler implements ITickHandler
 							{
 								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 							}
-							
-							if(flag)
+
+							if (flag)
 							{
-								player.isSwingInProgress = false;
+								//player.isSwingInProgress = false;
 							}
 						}
 
@@ -261,27 +260,6 @@ public class PlayerTickHandler implements ITickHandler
 						}
 					}
 				}
-			}
-		}
-	}
-
-
-
-
-	private void sendClickBlockToController (boolean par2)
-	{
-		if (par2 && Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
-		{
-			GameSettings settings = Minecraft.getMinecraft().gameSettings;
-			settings.keyBindAttack.pressed = true;
-
-			int j = Minecraft.getMinecraft().objectMouseOver.blockX;
-			int k = Minecraft.getMinecraft().objectMouseOver.blockY;
-			int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
-			Minecraft.getMinecraft().playerController.onPlayerDamageBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
-			if (Minecraft.getMinecraft().thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
-			{
-				Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(j, k, l, Minecraft.getMinecraft().objectMouseOver);
 			}
 		}
 	}
@@ -408,7 +386,7 @@ public class PlayerTickHandler implements ITickHandler
 					if (click == 1)
 					{
 						Minecraft.getMinecraft().playerController.attackEntity(player, target.entityHit);
-						
+
 						return true;
 					}
 
