@@ -202,7 +202,7 @@ public class PlayerTickHandler implements ITickHandler
 										{
 											float f = ForgeHooks.blockStrength(block, player, player.worldObj, x, y, z);
 
-											if (player.capabilities.isCreativeMode)
+											if (!player.capabilities.isCreativeMode)
 											{
 												currentBlockBreak += f;
 
@@ -262,7 +262,7 @@ public class PlayerTickHandler implements ITickHandler
 										{
 											float f = ForgeHooks.blockStrength(block, player, player.worldObj, x, y, z);
 
-											if (player.capabilities.isCreativeMode)
+											if (!player.capabilities.isCreativeMode)
 											{
 												currentBlockBreak += f;
 
