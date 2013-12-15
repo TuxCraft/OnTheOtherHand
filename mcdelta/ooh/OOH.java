@@ -27,7 +27,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod (modid = OOH.modid, useMetadata = true, name = "On the Other Hand", version = "0.1")
+@Mod (modid = OOH.modid, useMetadata = true, name = "On the Other Hand", version = "0.0d.pre")
 @NetworkMod (clientSideRequired = true, serverSideRequired = false, channels =
 { OOH.modid }, packetHandler = PacketHandler.class)
 public class OOH

@@ -85,157 +85,14 @@ public class PlayerTickHandler implements ITickHandler
 			{
 				if (data.doubleEngaged)
 				{
-					if (isServer())
-					{
-
-					}
-
 					if (isClient())
 					{
 						GameSettings settings = Minecraft.getMinecraft().gameSettings;
-						settings.keyBindAttack.pressTime = 0;
 						data.swingProgress[1] = data.swingProgress[0];
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
-							boolean flag = true;
-
-							settings.keyBindAttack.pressed = false;
-
-							int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
-
-							ItemStack stack1 = data.secondItem;
-							ItemStack stack2 = player.inventory.getStackInSlot(slot);
-
-							boolean idsMatch = false;
-							boolean metaMatch = false;
-							boolean sizeMatch = false;
-							boolean bool = stack1 != stack2;
-
-							if (stack1 != null && stack2 != null)
-							{
-								idsMatch = stack1.itemID == stack2.itemID;
-								metaMatch = stack1.getItemDamage() == stack2.getItemDamage();
-								sizeMatch = stack1.stackSize == stack2.stackSize;
-								bool = true;
-							}
-
-							if ((!(idsMatch && metaMatch && sizeMatch) && bool))
-							{
-								data.secondItem = player.inventory.getStackInSlot(slot);
-								data.startSwing = false;
-								data.resetEquippedProgress();
-								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
-							}
-
-							if (cooldownRight != 0)
-							{
-								cooldownRight--;
-							}
-
-							if (cooldownLeft != 0)
-							{
-								cooldownLeft--;
-							}
-
-							if (rightClick != null && rightClick.pressed)
-							{
-								rightHeldTime++;
-							}
-
-							else
-							{
-								rightHeldTime = 0;
-							}
-
-							if (leftClick != null && leftClick.pressed)
-							{
-								leftHeldTime++;
-							}
-
-							else
-							{
-								leftHeldTime = 0;
-							}
-
-							if (repeat ? rightHeldTime >= 1 : rightHeldTime == 1)
-							{
-								int orig = player.inventory.currentItem;
-								player.inventory.currentItem = slot;
-
-								ItemStack stack = data.secondItem;
-								int i = stack != null && (stack.getItem() instanceof ItemSword) ? 1 : 0;
-
-								if (cooldownRight == 0)
-								{
-									cooldownRight = 4;
-
-									if (click(player, i, true))
-									{
-										data.startSwing = true;
-									}
-								}
-
-								player.inventory.currentItem = orig;
-							}
-
-							if (leftHeldTime >= 1 || cooldownLeft != 0)
-							{
-								flag = false;
-							}
-
-							if (repeat ? leftHeldTime >= 1 : leftHeldTime == 1 || Minecraft.getMinecraft().objectMouseOver != null && leftHeldTime >= 1 && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
-							{
-								int i = player.getCurrentEquippedItem() != null && (player.getCurrentEquippedItem().getItem() instanceof ItemTool || player.getCurrentEquippedItem().getItem() instanceof ItemSword) ? 1 : 0;
-
-								if (player.getCurrentEquippedItem() == null)
-								{
-									i = 1;
-								}
-
-								if (cooldownLeft == 0)
-								{
-									cooldownLeft = 4;
-
-									if (click(player, i, false))
-									{
-										player.swingItem();
-									}
-								}
-
-								if (i == 1 && ((player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool) || player.getCurrentEquippedItem() == null))
-								{
-									Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = true;
-								}
-							}
-
-							data.equipProgress[1] = data.equipProgress[0];
-
-							float f = 0.5F;
-
-							float f1 = 1.0F - data.equipProgress[0];
-
-							if (f1 < -f)
-							{
-								f1 = -f;
-							}
-
-							if (f1 > f)
-							{
-								f1 = f;
-							}
-
-							data.equipProgress[0] += f1;
-
-							if (data.equipProgress[0] != 1)
-							{
-								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
-							}
-
-							if (flag)
-							{
-								// player.isSwingInProgress = false;
-							}
+							
 						}
 
 						if (data.startSwing)
@@ -245,7 +102,6 @@ public class PlayerTickHandler implements ITickHandler
 						}
 
 						data.updateArmSwing(player);
-						OOHData.setOOHData(player, data);
 					}
 				}
 

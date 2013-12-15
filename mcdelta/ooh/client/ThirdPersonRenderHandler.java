@@ -122,7 +122,15 @@ public class ThirdPersonRenderHandler
 			body = new ModelRenderer(modelBipedMain, 16, 16);
 			body.addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4, 0.0F);
 			body.setRotationPoint(0.0F, 0.0F, 0.0F);
-
+			
+			modelBipedMain.boxList.clear();
+			modelBipedMain.boxList.add(body);
+			modelBipedMain.boxList.add(armRight);
+			modelBipedMain.boxList.add(armLeft);
+			modelBipedMain.boxList.add(modelBipedMain.bipedHead);
+			modelBipedMain.boxList.add(modelBipedMain.bipedLeftLeg);
+			modelBipedMain.boxList.add(modelBipedMain.bipedRightLeg);
+			
 			if (data.doubleEngaged && renderSwingProgress(player, event.partialRenderTick) > 0.0F)
 			{
 				float f6 = renderSwingProgress(player, event.partialRenderTick);
@@ -216,7 +224,7 @@ public class ThirdPersonRenderHandler
 				{
 					f11 = 0.625F;
 					GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
-					GL11.glRotatef(-20.0F, 0.0F, 1.0F, 0.0F);
+					GL11.glRotatef(20.0F, 0.0F, 1.0F, 0.0F);
 					GL11.glScalef(f11, -f11, f11);
 					GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
 					GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
