@@ -1,7 +1,10 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.*;
+import static mcdelta.ooh.OOH.isClient;
+import static mcdelta.ooh.OOH.isServer;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
@@ -38,7 +41,7 @@ public class PlayerTickHandler implements ITickHandler
 
 	@Override
 	public void tickStart (EnumSet<TickType> type, Object... tickData)
-	{
+	{	
 		if (type.contains(TickType.PLAYER))
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
@@ -94,6 +97,9 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
+							GameSettings settings = Minecraft.getMinecraft().gameSettings;
+							settings.keyBindAttack.pressed = false;
+							
 							int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 
 							ItemStack stack1 = data.secondItem;
@@ -155,7 +161,7 @@ public class PlayerTickHandler implements ITickHandler
 								int orig = player.inventory.currentItem;
 								player.inventory.currentItem = slot;
 
-								int i = data.secondItem != null && data.secondItem.getItem() != null && (data.secondItem.getItem() instanceof ItemTool || data.secondItem.getItem() instanceof ItemSword) ? 1 : 0;
+								int i = data.secondItem != null && data.secondItem.getItem() != null && (data.secondItem.getItem() instanceof ItemSword) ? 1 : 0;
 
 								if (cooldownRight == 0)
 								{
@@ -169,7 +175,7 @@ public class PlayerTickHandler implements ITickHandler
 
 								if (i == 1)
 								{
-									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
+									sendClickBlockToController(Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
 
 								player.inventory.currentItem = orig;
@@ -191,7 +197,7 @@ public class PlayerTickHandler implements ITickHandler
 
 								if (i == 1)
 								{
-									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
+									sendClickBlockToController(Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
 							}
 
@@ -227,8 +233,6 @@ public class PlayerTickHandler implements ITickHandler
 
 						data.updateArmSwing(player);
 						OOHData.setOOHData(player, data);
-						
-						sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 					}
 				}
 
@@ -255,10 +259,13 @@ public class PlayerTickHandler implements ITickHandler
 
 
 
-	private void sendClickBlockToController (int par1, boolean par2)
+	private void sendClickBlockToController (boolean par2)
 	{
-		if (par2 && Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE && par1 == 0)
+		if (par2 && Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
 		{
+			GameSettings settings = Minecraft.getMinecraft().gameSettings;
+			settings.keyBindAttack.pressed = true;
+			
 			int j = Minecraft.getMinecraft().objectMouseOver.blockX;
 			int k = Minecraft.getMinecraft().objectMouseOver.blockY;
 			int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
@@ -267,10 +274,6 @@ public class PlayerTickHandler implements ITickHandler
 			{
 				Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(j, k, l, Minecraft.getMinecraft().objectMouseOver);
 			}
-		}
-		else
-		{
-			Minecraft.getMinecraft().playerController.resetBlockRemoving();
 		}
 	}
 
@@ -346,6 +349,8 @@ public class PlayerTickHandler implements ITickHandler
 							stack = null;
 						}
 
+						repeat = true;
+						
 						return true;
 					}
 
