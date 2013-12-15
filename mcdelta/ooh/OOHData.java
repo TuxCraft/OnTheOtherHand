@@ -126,7 +126,7 @@ public class OOHData
 
 	public float getSwingProgress (float f)
 	{
-		float f1 = this.swingProgress[0] - this.swingProgress[1];
+		float f1 = this.swingProgress[0];
 
 		if (f1 < 0.0F)
 		{

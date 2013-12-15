@@ -26,6 +26,13 @@ public class PlayerTracker implements IPlayerTracker
 		else
 		{
 			data.doubleEngaged = false;
+			data.swinging = false;
+			data.swingProgressInt = 0;
+			data.swingProgress = new float[]
+			{ 0, 0 };
+			data.startSwing = false;
+			data.equipProgress = new float[]
+			{ 0, 0 };
 		}
 
 		OOHData.setOOHData(player, data);

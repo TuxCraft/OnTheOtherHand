@@ -89,6 +89,8 @@ public class PlayerTickHandler implements ITickHandler
 
 					if (isClient())
 					{
+						data.swingProgress[1] = data.swingProgress[0];
+						
 						int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 
 						ItemStack stack1 = data.secondItem;
@@ -112,9 +114,10 @@ public class PlayerTickHandler implements ITickHandler
 							data.secondItem = player.inventory.getStackInSlot(slot);
 							data.startSwing = false;
 							data.resetEquippedProgress();
-							log(player.inventory.currentItem + " " + slot);
 							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 						}
+						
+						
 						
 						data.swingProgress[1] = data.swingProgress[0];
 
@@ -153,7 +156,6 @@ public class PlayerTickHandler implements ITickHandler
 							if (rightHeldTime >= 1)
 							{
 								int orig = player.inventory.currentItem;
-								int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 								player.inventory.currentItem = slot;
 
 								int i = data.secondItem != null && data.secondItem.getItem() != null && (data.secondItem.getItem() instanceof ItemTool || data.secondItem.getItem() instanceof ItemSword) ? 1 : 0;
@@ -302,7 +304,7 @@ public class PlayerTickHandler implements ITickHandler
 				return false;
 			}
 
-			return true;
+			return stack == null;
 		}
 
 		if (stack == null)
@@ -336,8 +338,27 @@ public class PlayerTickHandler implements ITickHandler
 
 						return true;
 					}
+					
+					else
+					{
+						boolean result2 = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
+						if (result2 && stack != null && Minecraft.getMinecraft().playerController.sendUseItem(player, player.worldObj, stack))
+						{
+							if (offHand)
+							{
+								data.resetEquippedProgress();
+								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+							}
+							else
+							{
+								Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
+							}
 
-					break;
+							return false;
+						}
+
+						return false;
+					}
 
 				case ENTITY:
 
