@@ -8,6 +8,7 @@ import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
+import mcdelta.ooh.network.PacketAttackEntity;
 import mcdelta.ooh.network.PacketBreakBlock;
 import mcdelta.ooh.network.PacketSetData;
 import net.minecraft.block.Block;
@@ -432,6 +433,21 @@ public class PlayerTickHandler implements ITickHandler
 
 				return true;
 			}
+
+			else if (target.typeOfHit == EnumMovingObjectType.ENTITY)
+			{
+				if (Minecraft.getMinecraft().playerController.func_78768_b(player, target.entityHit))
+				{
+					return true;
+				}
+
+				else
+				{
+					Minecraft.getMinecraft().playerController.attackEntity(player, target.entityHit);
+
+					return true;
+				}
+			}
 		}
 
 		else
@@ -501,8 +517,16 @@ public class PlayerTickHandler implements ITickHandler
 
 					if (click == 1)
 					{
-						Minecraft.getMinecraft().playerController.attackEntity(player, target.entityHit);
-
+						player.attackTargetEntityWithCurrentItem(target.entityHit);
+						
+						int i = player.inventory.currentItem;
+						
+						if(offHand)
+						{
+							i = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
+							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketAttackEntity(player, target.entityHit, i, true)));
+						}
+						
 						return true;
 					}
 
