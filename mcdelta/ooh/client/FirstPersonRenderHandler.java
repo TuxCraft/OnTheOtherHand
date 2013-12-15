@@ -49,8 +49,6 @@ public class FirstPersonRenderHandler
 	private double	                      cameraYaw;
 	private double	                      cameraPitch;
 	private float	                      farPlaneDistance;
-	private float	                      equippedProgress;
-	private float	                      prevEquippedProgress;
 	private int	                          debugViewDirection;
 
 	private Method	                      getFOVModifier;
@@ -200,16 +198,8 @@ public class FirstPersonRenderHandler
 	{
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		OOHData data = OOHData.getOOHData(player);
-		
-		Field fi1 = renderer.getClass().getDeclaredField("prevEquippedProgress");
-		fi1.setAccessible(true);
-		prevEquippedProgress = (Float) fi1.get(renderer);
 
-		Field fi2 = renderer.getClass().getDeclaredField("equippedProgress");
-		fi2.setAccessible(true);
-		equippedProgress = (Float) fi2.get(renderer);
-
-		float f1 = prevEquippedProgress + (equippedProgress - prevEquippedProgress) * partialTicks;
+		float f1 = data.equipProgress[1] + (data.equipProgress[0] - data.equipProgress[1]) * partialTicks;
 		EntityClientPlayerMP entityclientplayermp = Minecraft.getMinecraft().thePlayer;
 		float f2 = entityclientplayermp.prevRotationPitch + (entityclientplayermp.rotationPitch - entityclientplayermp.prevRotationPitch) * partialTicks;
 		GL11.glPushMatrix();

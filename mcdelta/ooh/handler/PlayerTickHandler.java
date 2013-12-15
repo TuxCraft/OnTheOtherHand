@@ -158,7 +158,7 @@ public class PlayerTickHandler implements ITickHandler
 								{
 									cooldownRight = 4;
 
-									if (click(player, data.secondItem, i))
+									if (click(player, i, true))
 									{
 										data.startSwing = true;
 										PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
@@ -184,7 +184,7 @@ public class PlayerTickHandler implements ITickHandler
 								{
 									cooldownLeft = 4;
 
-									if (click(player, player.getCurrentEquippedItem(), i))
+									if (click(player, i, false))
 									{
 										player.swingItem();
 									}
@@ -194,6 +194,29 @@ public class PlayerTickHandler implements ITickHandler
 								{
 									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
+							}
+
+							data.equipProgress[1] = data.equipProgress[0];
+
+							float f = 0.5F;
+
+							float f1 = 1.0F - data.equipProgress[0];
+
+							if (f1 < -f)
+							{
+								f1 = -f;
+							}
+
+							if (f1 > f)
+							{
+								f1 = f;
+							}
+
+							data.equipProgress[0] += f1;
+
+							if (data.equipProgress[0] != 1)
+							{
+								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 							}
 						}
 
@@ -254,20 +277,30 @@ public class PlayerTickHandler implements ITickHandler
 
 
 
-	private boolean click (EntityPlayer player, ItemStack stack, int click)
+	private boolean click (EntityPlayer player, int click, boolean offHand)
 	{
+		ItemStack stack = player.getCurrentEquippedItem();
 		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
-		
+		OOHData data = OOHData.getOOHData(player);
+
 		if (target == null)
-		{	
+		{
 			boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
-            if (result && stack != null && Minecraft.getMinecraft().playerController.sendUseItem(player, player.worldObj, stack))
-            {
-            	Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress2();
-            	
-            	return false;
-            }
-			
+			if (result && stack != null && Minecraft.getMinecraft().playerController.sendUseItem(player, player.worldObj, stack))
+			{
+				if (offHand)
+				{
+					data.resetEquippedProgress();
+					PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+				}
+				else
+				{
+					Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
+				}
+
+				return false;
+			}
+
 			return true;
 		}
 
@@ -293,13 +326,15 @@ public class PlayerTickHandler implements ITickHandler
 					boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
 					boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
 
+					PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+					
 					if (result && bool)
 					{
 						if (stack.stackSize == 0)
 						{
 							stack = null;
 						}
-						
+
 						return true;
 					}
 

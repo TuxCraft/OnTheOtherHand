@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class OOHData
 {
 	public float[]	 swingProgress;
+	public float[]	 equipProgress;
 	public int	     swingProgressInt;
 	public boolean	 swinging;
 	public boolean	 doubleEngaged;
@@ -27,6 +28,8 @@ public class OOHData
 		swingProgress = new float[]
 		{ 0, 0 };
 		startSwing = false;
+		equipProgress = new float[]
+		{ 0, 0 };
 	}
 
 
@@ -51,6 +54,8 @@ public class OOHData
 		compound.setBoolean("swinging", swinging);
 		compound.setInteger("swingProgressInt", swingProgressInt);
 		compound.setBoolean("startSwing", startSwing);
+		compound.setFloat("equipProgressA", equipProgress[0]);
+		compound.setFloat("equipProgressB", equipProgress[1]);
 
 		return compound;
 	}
@@ -66,6 +71,8 @@ public class OOHData
 		swinging = compound.getBoolean("swinging");
 		swingProgressInt = compound.getInteger("swingProgressInt");
 		startSwing = compound.getBoolean("startSwing");
+		equipProgress[0] = compound.getFloat("equipProgressA");
+		equipProgress[1] = compound.getFloat("equipProgressB");
 
 		if (compound.getCompoundTag("secondItem").hasNoTags())
 		{
@@ -133,7 +140,7 @@ public class OOHData
 
 
 	public void swingArm (EntityPlayer player)
-	{	
+	{
 		ItemStack stack = this.secondItem;
 
 		if (stack != null && stack.getItem() != null)
@@ -150,5 +157,13 @@ public class OOHData
 			this.swingProgressInt = -1;
 			this.swinging = true;
 		}
+	}
+
+
+
+
+	public void resetEquippedProgress ()
+	{
+		equipProgress[0] = 0.0F;
 	}
 }
