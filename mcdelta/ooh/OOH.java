@@ -1,5 +1,7 @@
 package mcdelta.ooh;
 
+import java.lang.reflect.Field;
+
 import mcdelta.ooh.client.FirstPersonRenderHandler;
 import mcdelta.ooh.client.HotbarOverlayHandler;
 import mcdelta.ooh.client.ThirdPersonRenderHandler;
@@ -15,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -52,6 +53,18 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
+		try
+		{
+			Class clazz = Class.forName("net.minecraft.world.World");
+			isObfuscated = false;
+		}
+		catch (Exception e)
+		{
+			isObfuscated = true;
+		}
+		
+		log("asdasasdasdasdasddsa " + isObfuscated);
+
 		proxy.registerKeyBinds();
 
 		if (isClient())
