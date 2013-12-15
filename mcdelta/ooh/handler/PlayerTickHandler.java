@@ -84,8 +84,13 @@ public class PlayerTickHandler implements ITickHandler
 				{
 					if (isServer())
 					{
-						int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 						
+					}
+
+					if (isClient())
+					{
+						int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
+
 						ItemStack stack1 = data.secondItem;
 						ItemStack stack2 = player.inventory.getStackInSlot(slot);
 
@@ -102,21 +107,15 @@ public class PlayerTickHandler implements ITickHandler
 							bool = true;
 						}
 
-						
-						
 						if ((!(idsMatch && metaMatch && sizeMatch) && bool))
 						{
 							data.secondItem = player.inventory.getStackInSlot(slot);
 							data.startSwing = false;
 							data.resetEquippedProgress();
-							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, data)));
-
-							return;
+							log(player.inventory.currentItem + " " + slot);
+							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 						}
-					}
-
-					if (isClient())
-					{
+						
 						data.swingProgress[1] = data.swingProgress[0];
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
@@ -135,6 +134,7 @@ public class PlayerTickHandler implements ITickHandler
 							{
 								rightHeldTime++;
 							}
+
 							else
 							{
 								rightHeldTime = 0;
@@ -144,6 +144,7 @@ public class PlayerTickHandler implements ITickHandler
 							{
 								leftHeldTime++;
 							}
+
 							else
 							{
 								leftHeldTime = 0;
@@ -154,7 +155,7 @@ public class PlayerTickHandler implements ITickHandler
 								int orig = player.inventory.currentItem;
 								int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 								player.inventory.currentItem = slot;
-								
+
 								int i = data.secondItem != null && data.secondItem.getItem() != null && (data.secondItem.getItem() instanceof ItemTool || data.secondItem.getItem() instanceof ItemSword) ? 1 : 0;
 
 								if (cooldownRight == 0)
@@ -172,7 +173,7 @@ public class PlayerTickHandler implements ITickHandler
 								{
 									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
-								
+
 								player.inventory.currentItem = orig;
 							}
 
@@ -325,7 +326,7 @@ public class PlayerTickHandler implements ITickHandler
 
 					boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
 					boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
-					
+
 					if (result && bool)
 					{
 						if (stack.stackSize == 0)
