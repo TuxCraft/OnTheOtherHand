@@ -188,11 +188,11 @@ public class PlayerTickHandler implements ITickHandler
 							{
 								int i = player.getCurrentEquippedItem() != null && (player.getCurrentEquippedItem().getItem() instanceof ItemTool || player.getCurrentEquippedItem().getItem() instanceof ItemSword) ? 1 : 0;
 
-								if(player.getCurrentEquippedItem() == null)
+								if (player.getCurrentEquippedItem() == null)
 								{
 									i = 1;
 								}
-								
+
 								if (cooldownLeft == 0)
 								{
 									cooldownLeft = 4;
@@ -234,7 +234,7 @@ public class PlayerTickHandler implements ITickHandler
 
 							if (flag)
 							{
-								//player.isSwingInProgress = false;
+								// player.isSwingInProgress = false;
 							}
 						}
 
@@ -251,6 +251,8 @@ public class PlayerTickHandler implements ITickHandler
 
 				else
 				{
+					OOHData.setOOHData(player, new OOHData(false, player.getCurrentEquippedItem()));
+
 					if (isClient())
 					{
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
@@ -309,7 +311,7 @@ public class PlayerTickHandler implements ITickHandler
 
 			return true;
 		}
-		
+
 		int x = target.blockX;
 		int y = target.blockY;
 		int z = target.blockZ;
@@ -320,7 +322,7 @@ public class PlayerTickHandler implements ITickHandler
 			if (target.typeOfHit == EnumMovingObjectType.TILE)
 			{
 				Minecraft.getMinecraft().playerController.clickBlock(x, y, z, side);
-				
+
 				return true;
 			}
 		}
@@ -330,7 +332,7 @@ public class PlayerTickHandler implements ITickHandler
 			switch (target.typeOfHit)
 			{
 				case TILE:
-					
+
 					if (click == 1)
 					{
 						if (stack.getItem() instanceof ItemTool)

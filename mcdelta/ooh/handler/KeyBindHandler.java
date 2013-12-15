@@ -42,16 +42,24 @@ public class KeyBindHandler extends KeyHandler
 		{
 			EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 			OOHData data = OOHData.getOOHData(player);
-			
-			if(data != null && data.doubleEngaged)
+
+			if (data != null)
 			{
-				data.doubleEngaged = false;
+				if (data.doubleEngaged)
+				{
+					data.doubleEngaged = false;
+				}
+				else
+				{
+					data.doubleEngaged = true;
+				}
 			}
-			else
+
+			if (data == null)
 			{
-				data.doubleEngaged = true;
+				data = new OOHData(false, null);
 			}
-			
+
 			OOHData.setOOHData(player, data);
 			PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, OOHData.getOOHData(player), true)));
 		}

@@ -113,7 +113,7 @@ public class OOHData
 		{
 			return;
 		}
-
+		
 		player.getEntityData().setCompoundTag("OOHData", data.writeToNBT(new NBTTagCompound()));
 	}
 
