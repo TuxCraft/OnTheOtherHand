@@ -98,7 +98,7 @@ public class ThirdPersonRenderHandler
 		{
 			if (renderManager == null)
 			{
-				Field fi1 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField("renderManager");
+				Field fi1 = renderer.getClass().getSuperclass().getSuperclass().getDeclaredField(OOH.isObfuscated ? "field_76990_c" : "renderManager");
 				fi1.setAccessible(true);
 				renderManager = (RenderManager) fi1.get(renderer);
 			}
@@ -159,7 +159,7 @@ public class ThirdPersonRenderHandler
 			{
 				Class[] param1 = new Class[]
 				{ net.minecraft.entity.Entity.class };
-				getEntityTexture = renderer.getClass().getDeclaredMethod("getEntityTexture", param1);
+				getEntityTexture = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_110775_a" : "getEntityTexture", param1);
 				getEntityTexture.setAccessible(true);
 				renderManager.renderEngine.bindTexture((ResourceLocation) getEntityTexture.invoke(event.renderer, new Object[]
 				{ player }));

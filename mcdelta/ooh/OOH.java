@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -43,7 +44,7 @@ public class OOH
 
 	public static final String	modid	    = "OOH";
 
-	public static boolean	   isObfuscated	= true;
+	public static boolean	   isObfuscated	= false;
 
 
 
