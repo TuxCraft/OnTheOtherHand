@@ -15,7 +15,7 @@ So let's review what is OOH?
 
 How much better can you get? :D
 
-I will be streaming development and progress here for all interested : http://www.twitch.tv/tuxcraft
+To compile for yourself set isObfuscated in the main class file to true then run recompile.sh and reobfuscate_srg.sh as asual.
 
 Contributors:
 
