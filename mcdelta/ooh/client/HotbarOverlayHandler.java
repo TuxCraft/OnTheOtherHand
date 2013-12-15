@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL12;
 
 public class HotbarOverlayHandler
 {
+	private static final ResourceLocation	OVERLAY	   = new ResourceLocation("ooh", "textures/gui/overlay.png");
 	private static final ResourceLocation	WIDGITS	   = new ResourceLocation("textures/gui/widgets.png");
 	protected static final RenderItem	  itemRenderer	= new RenderItem();
 	private int	                          zLevel	   = 100;
@@ -41,8 +42,8 @@ public class HotbarOverlayHandler
 			
 			int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 			
-			Minecraft.getMinecraft().renderEngine.bindTexture(WIDGITS);
-			drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 22 - 1, 0, 22, 24, 22);
+			Minecraft.getMinecraft().renderEngine.bindTexture(OVERLAY);
+			drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 21, 0, 24, 48, 24);
 		}
 	}
 
