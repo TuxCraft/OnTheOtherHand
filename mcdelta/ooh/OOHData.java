@@ -159,7 +159,6 @@ public class OOHData
 
 		if (!this.swinging || this.swingProgressInt >= getArmSwingAnimationEnd(player) / 2 || this.swingProgressInt < 0)
 		{
-			log("asdasddsa");
 			this.swingProgressInt = -1;
 			this.swinging = true;
 		}
