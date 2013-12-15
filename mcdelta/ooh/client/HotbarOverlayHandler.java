@@ -39,11 +39,33 @@ public class HotbarOverlayHandler
 		{
 			int height = event.resolution.getScaledHeight();
 			int width = event.resolution.getScaledWidth();
-			
+
 			int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
-			
-			Minecraft.getMinecraft().renderEngine.bindTexture(OVERLAY);
-			drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 21, 0, 24, 48, 24);
+
+			if (slot != 8)
+			{
+				Minecraft.getMinecraft().renderEngine.bindTexture(OVERLAY);
+				drawTexturedModalRect(width / 2 - 92 + slot * 20, height - 23, 0, 22, 48, 24);
+			}
+			else
+			{
+				Minecraft.getMinecraft().renderEngine.bindTexture(WIDGITS);
+		        drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 22 - 1, 0, 22, 24, 22);
+			}
+
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			RenderHelper.enableGUIStandardItemLighting();
+
+			for (int i = 0; i < 9; ++i)
+			{
+				int x = width / 2 - 90 + i * 20 + 2;
+				int z = height - 16 - 3;
+				renderInventorySlot(i, x, z, event.partialTicks);
+			}
+
+			RenderHelper.disableStandardItemLighting();
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		}
 	}
 
@@ -72,25 +94,6 @@ public class HotbarOverlayHandler
 
 		if (itemstack != null)
 		{
-			float f1 = (float) itemstack.animationsToGo - par4;
-
-			if (f1 > 0.0F)
-			{
-				GL11.glPushMatrix();
-				float f2 = 1.0F + f1 / 5.0F;
-				GL11.glTranslatef((float) (par2 + 8), (float) (par3 + 12), 0.0F);
-				GL11.glScalef(1.0F / f2, (f2 + 1.0F) / 2.0F, 1.0F);
-				GL11.glTranslatef((float) (-(par2 + 8)), (float) (-(par3 + 12)), 0.0F);
-			}
-
-			log(itemstack);
-			itemRenderer.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().fontRenderer, Minecraft.getMinecraft().getTextureManager(), itemstack, par2, par3);
-
-			if (f1 > 0.0F)
-			{
-				GL11.glPopMatrix();
-			}
-
 			itemRenderer.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, Minecraft.getMinecraft().getTextureManager(), itemstack, par2, par3);
 		}
 	}
