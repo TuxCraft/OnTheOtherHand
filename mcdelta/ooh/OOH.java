@@ -1,6 +1,7 @@
 package mcdelta.ooh;
 
 import mcdelta.ooh.client.FirstPersonRenderHandler;
+import mcdelta.ooh.client.HotbarOverlayHandler;
 import mcdelta.ooh.client.ThirdPersonRenderHandler;
 import mcdelta.ooh.handler.PlayerTickHandler;
 import mcdelta.ooh.handler.PlayerTracker;
@@ -58,6 +59,7 @@ public class OOH
 
 			MinecraftForge.EVENT_BUS.register(new ThirdPersonRenderHandler());
 			MinecraftForge.EVENT_BUS.register(new FirstPersonRenderHandler());
+			MinecraftForge.EVENT_BUS.register(new HotbarOverlayHandler());
 		}
 
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);

@@ -104,7 +104,7 @@ public class PlayerTickHandler implements ITickHandler
 						{
 							data.secondItem = player.inventory.getStackInSlot(8);
 							data.startSwing = false;
-							OOHData.setOOHData(player, data);
+							data.resetEquippedProgress();
 							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, data)));
 
 							return;
@@ -325,8 +325,6 @@ public class PlayerTickHandler implements ITickHandler
 
 					boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
 					boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
-
-					PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 					
 					if (result && bool)
 					{
