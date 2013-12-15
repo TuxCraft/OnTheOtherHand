@@ -92,11 +92,14 @@ public class PlayerTickHandler implements ITickHandler
 
 					if (isClient())
 					{
+						GameSettings settings = Minecraft.getMinecraft().gameSettings;
+						settings.keyBindAttack.pressTime = 0;
 						data.swingProgress[1] = data.swingProgress[0];
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
-							GameSettings settings = Minecraft.getMinecraft().gameSettings;
+							boolean flag = true;
+							
 							settings.keyBindAttack.pressed = false;
 
 							int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
@@ -160,8 +163,9 @@ public class PlayerTickHandler implements ITickHandler
 								int orig = player.inventory.currentItem;
 								player.inventory.currentItem = slot;
 
-								int i = data.secondItem != null && data.secondItem.getItem() != null && (data.secondItem.getItem() instanceof ItemSword) ? 1 : 0;
-
+								ItemStack stack = data.secondItem;
+								int i = stack != null && (stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemSword) ? 1 : 0;
+								
 								if (cooldownRight == 0)
 								{
 									cooldownRight = 4;
@@ -171,7 +175,12 @@ public class PlayerTickHandler implements ITickHandler
 										data.startSwing = true;
 									}
 								}
-
+								
+								if (i == 1 && stack != null && stack.getItem() instanceof ItemTool)
+								{
+									sendClickBlockToController(Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
+								}
+								
 								player.inventory.currentItem = orig;
 							}
 
@@ -186,6 +195,7 @@ public class PlayerTickHandler implements ITickHandler
 									if (click(player, i, false))
 									{
 										player.swingItem();
+										flag = false;
 									}
 								}
 
@@ -216,6 +226,11 @@ public class PlayerTickHandler implements ITickHandler
 							if (data.equipProgress[0] != 1)
 							{
 								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+							}
+							
+							if(flag)
+							{
+								player.isSwingInProgress = false;
 							}
 						}
 
