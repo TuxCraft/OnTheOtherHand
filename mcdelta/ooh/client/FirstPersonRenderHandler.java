@@ -66,7 +66,7 @@ public class FirstPersonRenderHandler
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		OOHData data = OOHData.getOOHData(player);
 		
-		if (isClient() && data.doubleEngaged)
+		if (data != null && isClient() && data.doubleEngaged)
 		{
 			EntityRenderer renderer = Minecraft.getMinecraft().entityRenderer;
 
@@ -436,6 +436,9 @@ public class FirstPersonRenderHandler
 				GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
 			}
 			
+			GL11.glScalef(1.0F, 1.0F, -1.0F);
+			GL11.glRotatef(270, 0, 1, 0);
+			
 			if (itemstack.getItem().requiresMultipleRenderPasses())
 			{
 				renderer.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
@@ -451,8 +454,6 @@ public class FirstPersonRenderHandler
 			}
 			else
 			{
-				GL11.glScalef(1.0F, 1.0F, -1.0F);
-				GL11.glRotatef(270, 0, 1, 0);
 				renderer.renderItem(entityclientplayermp, itemstack, 0, ItemRenderType.EQUIPPED_FIRST_PERSON);
 			}
 
