@@ -1,7 +1,6 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.isClient;
-import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -41,7 +40,7 @@ public class PlayerTickHandler implements ITickHandler
 
 	@Override
 	public void tickStart (EnumSet<TickType> type, Object... tickData)
-	{	
+	{
 		if (type.contains(TickType.PLAYER))
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
@@ -99,7 +98,7 @@ public class PlayerTickHandler implements ITickHandler
 						{
 							GameSettings settings = Minecraft.getMinecraft().gameSettings;
 							settings.keyBindAttack.pressed = false;
-							
+
 							int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
 
 							ItemStack stack1 = data.secondItem;
@@ -173,11 +172,6 @@ public class PlayerTickHandler implements ITickHandler
 									}
 								}
 
-								if (i == 1)
-								{
-									sendClickBlockToController(Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
-								}
-
 								player.inventory.currentItem = orig;
 							}
 
@@ -195,7 +189,7 @@ public class PlayerTickHandler implements ITickHandler
 									}
 								}
 
-								if (i == 1)
+								if (i == 1 && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool)
 								{
 									sendClickBlockToController(Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
@@ -265,7 +259,7 @@ public class PlayerTickHandler implements ITickHandler
 		{
 			GameSettings settings = Minecraft.getMinecraft().gameSettings;
 			settings.keyBindAttack.pressed = true;
-			
+
 			int j = Minecraft.getMinecraft().objectMouseOver.blockX;
 			int k = Minecraft.getMinecraft().objectMouseOver.blockY;
 			int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
@@ -288,6 +282,13 @@ public class PlayerTickHandler implements ITickHandler
 
 		if (target == null)
 		{
+			if (click == 1)
+			{
+				repeat = false;
+
+				return true;
+			}
+
 			boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
 			if (result && stack != null && Minecraft.getMinecraft().playerController.sendUseItem(player, player.worldObj, stack))
 			{
@@ -332,7 +333,10 @@ public class PlayerTickHandler implements ITickHandler
 
 					if (click == 1)
 					{
-						Minecraft.getMinecraft().playerController.clickBlock(x, y, z, side);
+						if (stack.getItem() instanceof ItemTool)
+						{
+							Minecraft.getMinecraft().playerController.clickBlock(x, y, z, side);
+						}
 
 						repeat = true;
 
@@ -350,7 +354,7 @@ public class PlayerTickHandler implements ITickHandler
 						}
 
 						repeat = true;
-						
+
 						return true;
 					}
 
@@ -381,8 +385,15 @@ public class PlayerTickHandler implements ITickHandler
 
 				case ENTITY:
 
-					if (Minecraft.getMinecraft().playerController.func_78768_b(player, target.entityHit))
+					if (click == 0 && Minecraft.getMinecraft().playerController.func_78768_b(player, target.entityHit))
 					{
+						return true;
+					}
+
+					if (click == 1)
+					{
+						Minecraft.getMinecraft().playerController.attackEntity(player, target.entityHit);
+						
 						return true;
 					}
 

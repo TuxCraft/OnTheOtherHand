@@ -6,6 +6,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRendererHelper.BLOCK_3
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import mcdelta.ooh.OOH;
 import mcdelta.ooh.OOHData;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBiped;
@@ -60,11 +61,11 @@ public class ThirdPersonRenderHandler
 		{
 			if (modelBipedMain == null)
 			{
-				Field fi1 = renderer.getClass().getDeclaredField("modelBipedMain");
+				Field fi1 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_77109_a" : "modelBipedMain");
 				fi1.setAccessible(true);
 				modelBipedMain = (ModelBiped) fi1.get(renderer);
 
-				Field fi2 = renderer.getClass().getDeclaredField("modelArmorChestplate");
+				Field fi2 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_77108_b" : "modelArmorChestplate");
 				fi2.setAccessible(true);
 				modelArmorChestplate = (ModelBiped) fi2.get(renderer);
 			}

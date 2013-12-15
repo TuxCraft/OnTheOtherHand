@@ -41,7 +41,9 @@ public class OOH
 	@SidedProxy (clientSide = "mcdelta.ooh.proxy.ClientProxy", serverSide = "mcdelta.ooh.proxy.CommonProxy")
 	public static CommonProxy	proxy;
 
-	public static final String	modid	= "OOH";
+	public static final String	modid	    = "OOH";
+
+	public static boolean	   isObfuscated	= true;
 
 
 

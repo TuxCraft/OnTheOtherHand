@@ -7,6 +7,7 @@ import static net.minecraftforge.client.IItemRenderer.ItemRenderType.FIRST_PERSO
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import mcdelta.ooh.OOH;
 import mcdelta.ooh.OOHData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -70,39 +71,39 @@ public class FirstPersonRenderHandler
 
 			try
 			{
-				Field fi1 = renderer.getClass().getDeclaredField("cameraZoom");
+				Field fi1 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78503_V" : "cameraZoom");
 				fi1.setAccessible(true);
 				cameraZoom = (Double) fi1.get(renderer);
 
-				Field fi2 = renderer.getClass().getDeclaredField("debugViewDirection");
+				Field fi2 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78532_q" : "debugViewDirection");
 				fi2.setAccessible(true);
 				debugViewDirection = (Integer) fi2.get(renderer);
 
-				Field fi3 = renderer.getClass().getDeclaredField("cameraYaw");
+				Field fi3 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78502_W" : "cameraYaw");
 				fi3.setAccessible(true);
 				cameraYaw = (Double) fi3.get(renderer);
 
-				Field fi4 = renderer.getClass().getDeclaredField("cameraPitch");
+				Field fi4 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78509_X" : "cameraPitch");
 				fi4.setAccessible(true);
 				cameraPitch = (Double) fi4.get(renderer);
 
-				Field fi5 = renderer.getClass().getDeclaredField("farPlaneDistance");
+				Field fi5 = renderer.getClass().getDeclaredField(OOH.isObfuscated ? "field_78530_s" : "farPlaneDistance");
 				fi5.setAccessible(true);
 				farPlaneDistance = (Float) fi5.get(renderer);
 
 				Class[] param1 = new Class[]
 				{ Float.TYPE, Boolean.TYPE };
-				getFOVModifier = renderer.getClass().getDeclaredMethod("getFOVModifier", param1);
+				getFOVModifier = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78481_a" : "getFOVModifier", param1);
 				getFOVModifier.setAccessible(true);
 
 				Class[] param2 = new Class[]
 				{ Float.TYPE };
-				hurtCameraEffect = renderer.getClass().getDeclaredMethod("hurtCameraEffect", param2);
+				hurtCameraEffect = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78482_e" : "hurtCameraEffect", param2);
 				hurtCameraEffect.setAccessible(true);
 
 				Class[] param3 = new Class[]
 				{ Float.TYPE };
-				setupViewBobbing = renderer.getClass().getDeclaredMethod("setupViewBobbing", param2);
+				setupViewBobbing = renderer.getClass().getDeclaredMethod(OOH.isObfuscated ? "func_78475_f" : "setupViewBobbing", param2);
 				setupViewBobbing.setAccessible(true);
 
 				if (cameraZoom == 1.0D)
