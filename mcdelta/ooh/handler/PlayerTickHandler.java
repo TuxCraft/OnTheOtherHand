@@ -287,8 +287,7 @@ public class PlayerTickHandler implements ITickHandler
 								int z = target.blockZ;
 								int side = target.sideHit;
 
-								Minecraft.getMinecraft().playerController.onPlayerDestroyBlock(slot, slot, slot, slot);
-
+								Minecraft.getMinecraft().playerController.onPlayerDestroyBlock(x, y, z, side);
 								currentBlockBreak = 0;
 							}
 

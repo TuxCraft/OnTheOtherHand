@@ -37,6 +37,8 @@ public class HotbarOverlayHandler
 
 		if (data != null && event.type == ElementType.HOTBAR && data.doubleEngaged)
 		{
+			GL11.glColor3f(1, 1, 1);
+			
 			int height = event.resolution.getScaledHeight();
 			int width = event.resolution.getScaledWidth();
 
