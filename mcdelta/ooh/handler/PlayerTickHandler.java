@@ -61,8 +61,8 @@ public class PlayerTickHandler implements ITickHandler
 							key = new KeyBinding("nope", 70);
 						}
 
-						//settings.keyBindAttack = key;
-						//settings.keyBindUseItem = key;
+						settings.keyBindAttack = key;
+						settings.keyBindUseItem = key;
 					}
 				}
 			}
@@ -117,7 +117,7 @@ public class PlayerTickHandler implements ITickHandler
 					{
 						data.swingProgress[1] = data.swingProgress[0];
 
-						if (player.username.equals(player.username))
+						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
 							if (cooldownRight != 0)
 							{
@@ -214,10 +214,16 @@ public class PlayerTickHandler implements ITickHandler
 				{
 					if (isClient())
 					{
-						GameSettings settings = Minecraft.getMinecraft().gameSettings;
+						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
+						{
+							GameSettings settings = Minecraft.getMinecraft().gameSettings;
 
-						settings.keyBindAttack = leftClick;
-						settings.keyBindUseItem = rightClick;
+							if (leftClick != null && rightClick != null)
+							{
+								settings.keyBindAttack = leftClick;
+								settings.keyBindUseItem = rightClick;
+							}
+						}
 					}
 				}
 			}

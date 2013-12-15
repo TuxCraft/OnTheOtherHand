@@ -48,7 +48,7 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
-		/**proxy.registerKeyBinds();
+		proxy.registerKeyBinds();
 
 		if (isClient())
 		{
@@ -62,7 +62,7 @@ public class OOH
 
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
-		GameRegistry.registerPlayerTracker(new PlayerTracker());*/
+		GameRegistry.registerPlayerTracker(new PlayerTracker());
 	}
 
 
