@@ -129,7 +129,7 @@ public class PlayerTickHandler implements ITickHandler
 								cooldownLeft--;
 							}
 
-							if (rightClick.pressed)
+							if (rightClick != null && rightClick.pressed)
 							{
 								rightHeldTime++;
 							}
@@ -138,7 +138,7 @@ public class PlayerTickHandler implements ITickHandler
 								rightHeldTime = 0;
 							}
 
-							if (leftClick.pressed)
+							if (leftClick != null && leftClick.pressed)
 							{
 								leftHeldTime++;
 							}
@@ -258,6 +258,8 @@ public class PlayerTickHandler implements ITickHandler
 
 	private boolean click (EntityPlayer player, int click)
 	{
+		log(Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE);
+
 		if (click != 0)
 		{
 			boolean flag = true;
@@ -267,7 +269,8 @@ public class PlayerTickHandler implements ITickHandler
 			{
 
 			}
-			else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.ENTITY)
+			
+			if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.ENTITY)
 			{
 				if (click == 0)
 				{
@@ -279,7 +282,8 @@ public class PlayerTickHandler implements ITickHandler
 					flag = false;
 				}
 			}
-			else if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
+			
+			if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
 			{
 				int j = Minecraft.getMinecraft().objectMouseOver.blockX;
 				int k = Minecraft.getMinecraft().objectMouseOver.blockY;
