@@ -197,23 +197,16 @@ public class PlayerTickHandler implements ITickHandler
 										int side = target.sideHit;
 
 										Block block = Block.blocksList[player.worldObj.getBlockId(x, y, z)];
-										int meta = player.worldObj.getBlockMetadata(x, y, z);
-										float modifier = (stack == null) ? 1 : ForgeHooks.isToolEffective(stack, block, meta) ? 2.5F : 1;
-										float f = (player.getCurrentPlayerStrVsBlock(block, true, meta) * modifier) / 100;
-										
+										float f = ForgeHooks.blockStrength(block, player, player.worldObj, x, y, z);
+
 										currentBlockBreak += f;
 
-										if (currentBlockBreak > 1)
-										{
-											currentBlockBreak = 0;
-										}
-
 										Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
-										
+
 										if (player.isCurrentToolAdventureModeExempt(x, y, z))
-						                {
-						                    Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(x, y, z, target);
-						                }
+										{
+											Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(x, y, z, target);
+										}
 									}
 								}
 
@@ -257,28 +250,35 @@ public class PlayerTickHandler implements ITickHandler
 										int side = target.sideHit;
 
 										Block block = Block.blocksList[player.worldObj.getBlockId(x, y, z)];
-										int meta = player.worldObj.getBlockMetadata(x, y, z);
-										float modifier = (stack == null) ? 1 : ForgeHooks.isToolEffective(stack, block, meta) ? 2.5F : 1;
-										float f = (player.getCurrentPlayerStrVsBlock(block, true, meta) * modifier) / 100;
-										
+										float f = ForgeHooks.blockStrength(block, player, player.worldObj, x, y, z);
+
 										currentBlockBreak += f;
 
-										if (currentBlockBreak > 1)
-										{
-											currentBlockBreak = 0;
-										}
-
 										Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
-										
+
 										if (player.isCurrentToolAdventureModeExempt(x, y, z))
-						                {
-						                    Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(x, y, z, target);
-						                }
+										{
+											Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(x, y, z, target);
+										}
 									}
 								}
 							}
 							
-							if(!(repeat ? rightHeldTime >= 1 : rightHeldTime == 1) && !(repeat ? leftHeldTime >= 1 : leftHeldTime == 1))
+							MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
+							
+							if (currentBlockBreak >= 1F && target != null)
+							{
+								int x = target.blockX;
+								int y = target.blockY;
+								int z = target.blockZ;
+								int side = target.sideHit;
+								
+								Minecraft.getMinecraft().playerController.onPlayerDestroyBlock(slot, slot, slot, slot);
+								
+								currentBlockBreak = 0;
+							}
+
+							if (!(repeat ? rightHeldTime >= 1 : rightHeldTime == 1) && !(repeat ? leftHeldTime >= 1 : leftHeldTime == 1))
 							{
 								currentBlockBreak = 0;
 							}
