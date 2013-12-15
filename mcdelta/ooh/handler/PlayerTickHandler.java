@@ -1,15 +1,17 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.*;
+import static mcdelta.ooh.OOH.isClient;
+import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.log;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.EnumSet;
 
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
 import mcdelta.ooh.network.PacketSetData;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.DestroyBlockProgress;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,11 +31,12 @@ public class PlayerTickHandler implements ITickHandler
 	private KeyBinding	leftClick;
 	private KeyBinding	rightClick;
 	private KeyBinding	key;
-	private int	       rightHeldTime	= 0;
-	private int	       leftHeldTime	 = 0;
-	private int	       cooldownRight	= 0;
-	private int	       cooldownLeft	 = 0;
-	private boolean	   repeat	     = false;
+	private int	       rightHeldTime	 = 0;
+	private int	       leftHeldTime	     = 0;
+	private int	       cooldownRight	 = 0;
+	private int	       cooldownLeft	     = 0;
+	private boolean	   repeat	         = false;
+	private float	   currentBlockBreak	= 0;
 
 
 
@@ -76,6 +79,8 @@ public class PlayerTickHandler implements ITickHandler
 	@Override
 	public void tickEnd (EnumSet<TickType> type, Object... tickData)
 	{
+		long l = System.currentTimeMillis();
+
 		if (type.contains(TickType.PLAYER))
 		{
 			EntityPlayer player = (EntityPlayer) tickData[0];
@@ -85,6 +90,11 @@ public class PlayerTickHandler implements ITickHandler
 			{
 				if (data.doubleEngaged)
 				{
+					if (isServer())
+					{
+
+					}
+
 					if (isClient())
 					{
 						GameSettings settings = Minecraft.getMinecraft().gameSettings;
@@ -92,7 +102,186 @@ public class PlayerTickHandler implements ITickHandler
 
 						if (Minecraft.getMinecraft().thePlayer.username.equals(player.username))
 						{
+							boolean flag = true;
+
+							settings.keyBindAttack.pressed = false;
+
+							int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
+
+							ItemStack stack1 = data.secondItem;
+							ItemStack stack2 = player.inventory.getStackInSlot(slot);
+
+							boolean idsMatch = false;
+							boolean metaMatch = false;
+							boolean sizeMatch = false;
+							boolean bool = stack1 != stack2;
+
+							if (stack1 != null && stack2 != null)
+							{
+								idsMatch = stack1.itemID == stack2.itemID;
+								metaMatch = stack1.getItemDamage() == stack2.getItemDamage();
+								sizeMatch = stack1.stackSize == stack2.stackSize;
+								bool = true;
+							}
+
+							if ((!(idsMatch && metaMatch && sizeMatch) && bool))
+							{
+								data.secondItem = player.inventory.getStackInSlot(slot);
+								data.startSwing = false;
+								data.resetEquippedProgress();
+								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+							}
+
+							if (cooldownRight != 0)
+							{
+								cooldownRight--;
+							}
+
+							if (cooldownLeft != 0)
+							{
+								cooldownLeft--;
+							}
+
+							if (rightClick != null && rightClick.pressed)
+							{
+								rightHeldTime++;
+							}
+
+							else
+							{
+								rightHeldTime = 0;
+							}
+
+							if (leftClick != null && leftClick.pressed)
+							{
+								leftHeldTime++;
+							}
+
+							else
+							{
+								leftHeldTime = 0;
+							}
+
+							if (repeat ? rightHeldTime >= 1 : rightHeldTime == 1)
+							{
+								int orig = player.inventory.currentItem;
+								player.inventory.currentItem = slot;
+
+								ItemStack stack = data.secondItem;
+								int i = stack != null && (stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemSword) ? 1 : 0;
+
+								if (stack == null)
+								{
+									i = 1;
+								}
+
+								if (cooldownRight == 0)
+								{
+									cooldownRight = 4;
+
+									if (click(player, i, true))
+									{
+										data.startSwing = true;
+									}
+								}
+
+								if (i == 1 && ((player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool) || player.getCurrentEquippedItem() == null))
+								{
+									MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
+
+									if (target != null)
+									{
+										int x = target.blockX;
+										int y = target.blockY;
+										int z = target.blockZ;
+										int side = target.sideHit;
+
+										Block block = Block.blocksList[player.worldObj.getBlockId(x, y, z)];
+										int meta = player.worldObj.getBlockMetadata(x, y, z);
+										log(player.getCurrentPlayerStrVsBlock(block, true, meta));
+										
+										currentBlockBreak += 0.05F;
+
+										if (currentBlockBreak > 1)
+										{
+											currentBlockBreak = 0;
+										}
+
+										Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+										
+										if (player.isCurrentToolAdventureModeExempt(x, y, z))
+						                {
+						                    Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(x, y, z, target);
+						                }
+									}
+								}
+
+								player.inventory.currentItem = orig;
+							}
 							
+							else
+							{
+								currentBlockBreak = 0;
+							}
+
+							if (leftHeldTime >= 1 || cooldownLeft != 0)
+							{
+								flag = false;
+							}
+
+							if (repeat ? leftHeldTime >= 1 : leftHeldTime == 1 || Minecraft.getMinecraft().objectMouseOver != null && leftHeldTime >= 1 && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
+							{
+								ItemStack stack = player.getCurrentEquippedItem();
+								int i = stack != null && (stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemSword) ? 1 : 0;
+
+								if (stack == null)
+								{
+									i = 1;
+								}
+
+								if (cooldownLeft == 0)
+								{
+									cooldownLeft = 4;
+
+									if (click(player, i, false))
+									{
+										player.swingItem();
+									}
+								}
+
+								if (i == 1 && ((player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool) || player.getCurrentEquippedItem() == null))
+								{
+									Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = true;
+								}
+							}
+
+							data.equipProgress[1] = data.equipProgress[0];
+
+							float f = 0.5F;
+
+							float f1 = 1.0F - data.equipProgress[0];
+
+							if (f1 < -f)
+							{
+								f1 = -f;
+							}
+
+							if (f1 > f)
+							{
+								f1 = f;
+							}
+
+							data.equipProgress[0] += f1;
+
+							if (data.equipProgress[0] != 1)
+							{
+								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+							}
+
+							if (flag)
+							{
+								player.isSwingInProgress = false;
+							}
 						}
 
 						if (data.startSwing)
@@ -102,6 +291,7 @@ public class PlayerTickHandler implements ITickHandler
 						}
 
 						data.updateArmSwing(player);
+						OOHData.setOOHData(player, data);
 					}
 				}
 
@@ -124,6 +314,13 @@ public class PlayerTickHandler implements ITickHandler
 					}
 				}
 			}
+		}
+
+		long l2 = System.currentTimeMillis() - l;
+
+		if (l2 > 2)
+		{
+			log("TOOK MORE THEN 2 MILLIS: " + l2);
 		}
 	}
 

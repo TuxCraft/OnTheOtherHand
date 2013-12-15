@@ -38,14 +38,11 @@ public class OOH
 	// - doesn't swing @ times
 
 	@Instance (OOH.modid)
-	public static OOH	       instance;
-
+	public static OOH	           instance;
 	@SidedProxy (clientSide = "mcdelta.ooh.proxy.ClientProxy", serverSide = "mcdelta.ooh.proxy.CommonProxy")
-	public static CommonProxy	proxy;
-
-	public static final String	modid	    = "OOH";
-
-	public static boolean	   isObfuscated	= false;
+	public static CommonProxy	   proxy;
+	public static final String	   modid	    = "OOH";
+	public static boolean	       isObfuscated	= false;
 
 
 
@@ -62,7 +59,7 @@ public class OOH
 		{
 			isObfuscated = true;
 		}
-		
+
 		log("asdasasdasdasdasddsa " + isObfuscated);
 
 		proxy.registerKeyBinds();
