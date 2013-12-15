@@ -184,10 +184,15 @@ public class PlayerTickHandler implements ITickHandler
 								flag = false;
 							}
 
-							if (repeat ? leftHeldTime >= 1 : leftHeldTime == 1)
+							if (repeat ? leftHeldTime >= 1 : leftHeldTime == 1 || Minecraft.getMinecraft().objectMouseOver != null && leftHeldTime >= 1 && Minecraft.getMinecraft().objectMouseOver.typeOfHit == EnumMovingObjectType.TILE)
 							{
 								int i = player.getCurrentEquippedItem() != null && (player.getCurrentEquippedItem().getItem() instanceof ItemTool || player.getCurrentEquippedItem().getItem() instanceof ItemSword) ? 1 : 0;
 
+								if(player.getCurrentEquippedItem() == null)
+								{
+									i = 1;
+								}
+								
 								if (cooldownLeft == 0)
 								{
 									cooldownLeft = 4;
@@ -198,7 +203,7 @@ public class PlayerTickHandler implements ITickHandler
 									}
 								}
 
-								if (i == 1 && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool)
+								if (i == 1 && ((player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemTool) || player.getCurrentEquippedItem() == null))
 								{
 									Minecraft.getMinecraft().gameSettings.keyBindAttack.pressed = true;
 								}
@@ -304,11 +309,18 @@ public class PlayerTickHandler implements ITickHandler
 
 			return true;
 		}
+		
+		int x = target.blockX;
+		int y = target.blockY;
+		int z = target.blockZ;
+		int side = target.sideHit;
 
 		if (stack == null)
 		{
 			if (target.typeOfHit == EnumMovingObjectType.TILE)
 			{
+				Minecraft.getMinecraft().playerController.clickBlock(x, y, z, side);
+				
 				return true;
 			}
 		}
@@ -318,12 +330,7 @@ public class PlayerTickHandler implements ITickHandler
 			switch (target.typeOfHit)
 			{
 				case TILE:
-
-					int x = target.blockX;
-					int y = target.blockY;
-					int z = target.blockZ;
-					int side = target.sideHit;
-
+					
 					if (click == 1)
 					{
 						if (stack.getItem() instanceof ItemTool)

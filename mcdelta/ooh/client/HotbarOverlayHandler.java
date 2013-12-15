@@ -53,7 +53,9 @@ public class HotbarOverlayHandler
 		        drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 22 - 1, 0, 22, 24, 22);
 			}
 			
-			drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 22 - 1, 0, 22, 50, 22);
+			Minecraft.getMinecraft().renderEngine.bindTexture(OVERLAY);
+	        drawTexturedModalRect(width / 2 - 91 - 1 + (slot) * 20, height - 22 - 1, 0, 46, 24, 46);
+	        drawTexturedModalRect(width / 2 - 91 - 1 + (player.inventory.currentItem) * 20, height - 22 - 1, 0, 70, 24, 70);
 
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
