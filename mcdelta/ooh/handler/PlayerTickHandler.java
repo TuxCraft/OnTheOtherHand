@@ -202,9 +202,12 @@ public class PlayerTickHandler implements ITickHandler
 										{
 											float f = ForgeHooks.blockStrength(block, player, player.worldObj, x, y, z);
 
-											currentBlockBreak += f;
+											if (player.capabilities.isCreativeMode)
+											{
+												currentBlockBreak += f;
 
-											Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+												Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+											}
 
 											if (player.isCurrentToolAdventureModeExempt(x, y, z))
 											{
@@ -259,9 +262,12 @@ public class PlayerTickHandler implements ITickHandler
 										{
 											float f = ForgeHooks.blockStrength(block, player, player.worldObj, x, y, z);
 
-											currentBlockBreak += f;
+											if (player.capabilities.isCreativeMode)
+											{
+												currentBlockBreak += f;
 
-											Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+												Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+											}
 
 											if (player.isCurrentToolAdventureModeExempt(x, y, z))
 											{

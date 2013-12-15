@@ -42,7 +42,7 @@ public class OOH
 	@SidedProxy (clientSide = "mcdelta.ooh.proxy.ClientProxy", serverSide = "mcdelta.ooh.proxy.CommonProxy")
 	public static CommonProxy	   proxy;
 	public static final String	   modid	    = "OOH";
-	public static boolean	       isObfuscated	= false;
+	public static boolean	       isObfuscated	= true;
 
 
 
@@ -50,7 +50,7 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
-		try
+		/**try
 		{
 			Class clazz = Class.forName("net.minecraft.world.World");
 			isObfuscated = false;
@@ -58,7 +58,7 @@ public class OOH
 		catch (Exception e)
 		{
 			isObfuscated = true;
-		}
+		}*/
 
 		log("asdasasdasdasdasddsa " + isObfuscated);
 
