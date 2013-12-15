@@ -1,7 +1,6 @@
 package mcdelta.ooh.handler;
 
-import static mcdelta.ooh.OOH.isClient;
-import static mcdelta.ooh.OOH.isServer;
+import static mcdelta.ooh.OOH.*;
 
 import java.util.EnumSet;
 
@@ -32,7 +31,7 @@ public class PlayerTickHandler implements ITickHandler
 	private int	       leftHeldTime	 = 0;
 	private int	       cooldownRight	= 0;
 	private int	       cooldownLeft	 = 0;
-	private boolean	   repeat	 = false;
+	private boolean	   repeat	     = false;
 
 
 
@@ -228,6 +227,8 @@ public class PlayerTickHandler implements ITickHandler
 
 						data.updateArmSwing(player);
 						OOHData.setOOHData(player, data);
+						
+						sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 					}
 				}
 
@@ -241,8 +242,8 @@ public class PlayerTickHandler implements ITickHandler
 
 							if (leftClick != null && rightClick != null)
 							{
-								settings.keyBindAttack = leftClick;
-								settings.keyBindUseItem = rightClick;
+								settings.keyBindAttack = rightClick;
+								settings.keyBindUseItem = leftClick;
 							}
 						}
 					}
@@ -262,7 +263,6 @@ public class PlayerTickHandler implements ITickHandler
 			int k = Minecraft.getMinecraft().objectMouseOver.blockY;
 			int l = Minecraft.getMinecraft().objectMouseOver.blockZ;
 			Minecraft.getMinecraft().playerController.onPlayerDamageBlock(j, k, l, Minecraft.getMinecraft().objectMouseOver.sideHit);
-
 			if (Minecraft.getMinecraft().thePlayer.isCurrentToolAdventureModeExempt(j, k, l))
 			{
 				Minecraft.getMinecraft().effectRenderer.addBlockHitEffects(j, k, l, Minecraft.getMinecraft().objectMouseOver);
@@ -284,7 +284,7 @@ public class PlayerTickHandler implements ITickHandler
 		OOHData data = OOHData.getOOHData(player);
 
 		if (target == null)
-		{		
+		{
 			boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_AIR, 0, 0, 0, -1).isCanceled();
 			if (result && stack != null && Minecraft.getMinecraft().playerController.sendUseItem(player, player.worldObj, stack))
 			{
@@ -304,7 +304,7 @@ public class PlayerTickHandler implements ITickHandler
 			}
 
 			repeat = false;
-			
+
 			return true;
 		}
 
@@ -327,15 +327,15 @@ public class PlayerTickHandler implements ITickHandler
 					int z = target.blockZ;
 					int side = target.sideHit;
 
-					if(click == 1)
+					if (click == 1)
 					{
 						Minecraft.getMinecraft().playerController.clickBlock(x, y, z, side);
-						
+
 						repeat = true;
-						
+
 						return true;
 					}
-					
+
 					boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
 					boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
 
@@ -365,12 +365,12 @@ public class PlayerTickHandler implements ITickHandler
 							}
 
 							repeat = true;
-							
+
 							return false;
 						}
 
 						repeat = false;
-						
+
 						return false;
 					}
 
