@@ -21,7 +21,6 @@ import org.lwjgl.opengl.GL12;
 
 public class HotbarOverlayHandler
 {
-	private static final ResourceLocation	OVERLAY	   = new ResourceLocation("ooh", "textures/gui/overlay.png");
 	private static final ResourceLocation	WIDGITS	   = new ResourceLocation("textures/gui/widgets.png");
 	protected static final RenderItem	  itemRenderer	= new RenderItem();
 	private int	                          zLevel	   = 100;
@@ -30,46 +29,20 @@ public class HotbarOverlayHandler
 
 
 	@ForgeSubscribe
-	public void renderOverlay (RenderGameOverlayEvent event)
+	public void renderOverlay (RenderGameOverlayEvent.Post event)
 	{
 		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		OOHData data = OOHData.getOOHData(player);
 
 		if (data != null && event.type == ElementType.HOTBAR && data.doubleEngaged)
 		{
-			//event.setCanceled(true);
-
-			int i = player.inventory.currentItem;
-			player.inventory.currentItem = -200;
-			
-			/**int height = event.resolution.getScaledHeight();
+			int height = event.resolution.getScaledHeight();
 			int width = event.resolution.getScaledWidth();
-
-			Minecraft.getMinecraft().mcProfiler.startSection("actionBar");
-
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			
+			int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
+			
 			Minecraft.getMinecraft().renderEngine.bindTexture(WIDGITS);
-
-			InventoryPlayer inv = Minecraft.getMinecraft().thePlayer.inventory;
-			drawTexturedModalRect(width / 2 - 91, height - 22, 0, 0, 182, 22);
-			drawTexturedModalRect(width / 2 - 91 - 1 + inv.currentItem * 20, height - 22 - 1, 0, 22, 24, 22);
-
-			GL11.glDisable(GL11.GL_BLEND);
-			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-			RenderHelper.enableGUIStandardItemLighting();
-
-			for (int i = 0; i < 9; ++i)
-			{
-				int x = width / 2 - 90 + i * 20 + 2;
-				int z = height - 16 - 3;
-				renderInventorySlot(i, x, z, event.partialTicks);
-			}
-
-			RenderHelper.disableStandardItemLighting();
-			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-			Minecraft.getMinecraft().mcProfiler.endSection();*/
+			drawTexturedModalRect(width / 2 - 91 - 1 + slot * 20, height - 22 - 1, 0, 22, 24, 22);
 		}
 	}
 

@@ -84,8 +84,10 @@ public class PlayerTickHandler implements ITickHandler
 				{
 					if (isServer())
 					{
+						int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
+						
 						ItemStack stack1 = data.secondItem;
-						ItemStack stack2 = player.inventory.getStackInSlot(8);
+						ItemStack stack2 = player.inventory.getStackInSlot(slot);
 
 						boolean idsMatch = false;
 						boolean metaMatch = false;
@@ -100,9 +102,11 @@ public class PlayerTickHandler implements ITickHandler
 							bool = true;
 						}
 
-						if (!(idsMatch && metaMatch && sizeMatch) && bool)
+						
+						
+						if ((!(idsMatch && metaMatch && sizeMatch) && bool))
 						{
-							data.secondItem = player.inventory.getStackInSlot(8);
+							data.secondItem = player.inventory.getStackInSlot(slot);
 							data.startSwing = false;
 							data.resetEquippedProgress();
 							PacketDispatcher.sendPacketToAllPlayers(EnumPacketTypes.populatePacket(new PacketSetData(player, data)));
@@ -145,14 +149,13 @@ public class PlayerTickHandler implements ITickHandler
 								leftHeldTime = 0;
 							}
 
-							// if (((Minecraft.getMinecraft().objectMouseOver ==
-							// null) ? rightHeldTime == 1 : rightHeldTime >= 1)
-							// && cooldownRight == 0)
 							if (rightHeldTime >= 1)
 							{
+								int orig = player.inventory.currentItem;
+								int slot = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
+								player.inventory.currentItem = slot;
+								
 								int i = data.secondItem != null && data.secondItem.getItem() != null && (data.secondItem.getItem() instanceof ItemTool || data.secondItem.getItem() instanceof ItemSword) ? 1 : 0;
-
-								player.inventory.currentItem = 8;
 
 								if (cooldownRight == 0)
 								{
@@ -169,13 +172,10 @@ public class PlayerTickHandler implements ITickHandler
 								{
 									sendClickBlockToController(0, Minecraft.getMinecraft().currentScreen == null && Minecraft.getMinecraft().inGameHasFocus);
 								}
-
-								player.inventory.currentItem = 0;
+								
+								player.inventory.currentItem = orig;
 							}
 
-							// if (((Minecraft.getMinecraft().objectMouseOver ==
-							// null) ? leftHeldTime == 1 : leftHeldTime >= 1) &&
-							// cooldownLeft == 0)
 							if (leftHeldTime >= 1)
 							{
 								int i = player.getCurrentEquippedItem() != null && (player.getCurrentEquippedItem().getItem() instanceof ItemTool || player.getCurrentEquippedItem().getItem() instanceof ItemSword) ? 1 : 0;

@@ -49,7 +49,6 @@ public class KeyBindHandler extends KeyHandler
 			}
 			else
 			{
-				player.inventory.currentItem = 0;
 				data.doubleEngaged = true;
 			}
 			
