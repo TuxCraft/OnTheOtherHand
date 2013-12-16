@@ -1,11 +1,9 @@
 package mcdelta.ooh.client;
 
-import static mcdelta.ooh.OOH.*;
-
+import static mcdelta.ooh.OOH.isClient;
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.FIRST_PERSON_MAP;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import mcdelta.ooh.OOH;
@@ -13,8 +11,6 @@ import mcdelta.ooh.OOHData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -36,6 +32,7 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;

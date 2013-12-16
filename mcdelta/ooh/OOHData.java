@@ -17,6 +17,7 @@ public class OOHData
 	public boolean	 doubleEngaged;
 	public boolean	 startSwing;
 	public ItemStack	secondItem;
+	public int	     maxUseDuration;
 
 
 
@@ -30,6 +31,7 @@ public class OOHData
 		startSwing = false;
 		equipProgress = new float[]
 		{ 0, 0 };
+		maxUseDuration = 0;
 	}
 
 
@@ -56,6 +58,7 @@ public class OOHData
 		compound.setBoolean("startSwing", startSwing);
 		compound.setFloat("equipProgressA", equipProgress[0]);
 		compound.setFloat("equipProgressB", equipProgress[1]);
+		compound.setInteger("maxUseDuration", maxUseDuration);
 
 		return compound;
 	}
@@ -73,6 +76,7 @@ public class OOHData
 		startSwing = compound.getBoolean("startSwing");
 		equipProgress[0] = compound.getFloat("equipProgressA");
 		equipProgress[1] = compound.getFloat("equipProgressB");
+		maxUseDuration = compound.getInteger("maxUseDuration");
 
 		if (compound.getCompoundTag("secondItem").hasNoTags())
 		{
@@ -113,7 +117,7 @@ public class OOHData
 		{
 			return;
 		}
-		
+
 		player.getEntityData().setCompoundTag("OOHData", data.writeToNBT(new NBTTagCompound()));
 	}
 

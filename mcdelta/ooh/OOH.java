@@ -1,6 +1,7 @@
 package mcdelta.ooh;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import mcdelta.ooh.client.FirstPersonRenderHandler;
 import mcdelta.ooh.client.HotbarOverlayHandler;
@@ -13,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,11 +40,12 @@ public class OOH
 	// - doesn't swing @ times
 
 	@Instance (OOH.modid)
-	public static OOH	           instance;
+	public static OOH	       instance;
 	@SidedProxy (clientSide = "mcdelta.ooh.proxy.ClientProxy", serverSide = "mcdelta.ooh.proxy.CommonProxy")
-	public static CommonProxy	   proxy;
-	public static final String	   modid	    = "OOH";
-	public static boolean	       isObfuscated	= false;
+	public static CommonProxy	proxy;
+	public static final String	modid	     = "OOH";
+	public static boolean	   isObfuscated	 = false;
+	public static List<Item>	illegalItems	= new ArrayList();
 
 
 
@@ -50,18 +53,6 @@ public class OOH
 	@EventHandler
 	public void load (FMLInitializationEvent event)
 	{
-		/**try
-		{
-			Class clazz = Class.forName("net.minecraft.world.World");
-			isObfuscated = false;
-		}
-		catch (Exception e)
-		{
-			isObfuscated = true;
-		}*/
-
-		log("asdasasdasdasdasddsa " + isObfuscated);
-
 		proxy.registerKeyBinds();
 
 		if (isClient())
@@ -78,6 +69,8 @@ public class OOH
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.CLIENT);
 		TickRegistry.registerTickHandler(new PlayerTickHandler(), Side.SERVER);
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
+		
+		illegalItems.add(Item.map);
 	}
 
 

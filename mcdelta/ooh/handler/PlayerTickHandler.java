@@ -6,6 +6,7 @@ import static mcdelta.ooh.OOH.log;
 
 import java.util.EnumSet;
 
+import mcdelta.ooh.OOH;
 import mcdelta.ooh.OOHData;
 import mcdelta.ooh.network.EnumPacketTypes;
 import mcdelta.ooh.network.PacketAttackEntity;
@@ -91,7 +92,7 @@ public class PlayerTickHandler implements ITickHandler
 			if (data != null)
 			{
 				if (data.doubleEngaged)
-				{
+				{	
 					if (isServer())
 					{
 
@@ -131,9 +132,16 @@ public class PlayerTickHandler implements ITickHandler
 								data.secondItem = player.inventory.getStackInSlot(slot);
 								data.startSwing = false;
 								data.resetEquippedProgress();
+
 								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
 							}
 
+							if ((player.getCurrentEquippedItem() != null && OOH.illegalItems.contains(player.getCurrentEquippedItem().getItem())) || (data.secondItem != null && OOH.illegalItems.contains(data.secondItem.getItem())))
+							{
+								data.doubleEngaged = false;
+								PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketSetData(player, data, true)));
+							}
+							
 							if (cooldownRight != 0)
 							{
 								cooldownRight--;
@@ -207,9 +215,12 @@ public class PlayerTickHandler implements ITickHandler
 											if (!player.capabilities.isCreativeMode)
 											{
 												currentBlockBreak += f;
-
-												Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
 												attemptBreakBlock(player);
+												
+												if(block != null)
+												{
+													Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+												}
 											}
 
 											if (player.isCurrentToolAdventureModeExempt(x, y, z))
@@ -268,9 +279,12 @@ public class PlayerTickHandler implements ITickHandler
 											if (!player.capabilities.isCreativeMode)
 											{
 												currentBlockBreak += f;
-
-												Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
 												attemptBreakBlock(player);
+												
+												if(block != null)
+												{
+													Minecraft.getMinecraft().theWorld.destroyBlockInWorldPartially(player.entityId, x, y, z, (int) (this.currentBlockBreak * 10.0F) - 1);
+												}
 											}
 
 											if (player.isCurrentToolAdventureModeExempt(x, y, z))
@@ -387,7 +401,7 @@ public class PlayerTickHandler implements ITickHandler
 		ItemStack stack = player.getCurrentEquippedItem();
 		MovingObjectPosition target = Minecraft.getMinecraft().objectMouseOver;
 		OOHData data = OOHData.getOOHData(player);
-
+		
 		if (target == null)
 		{
 			if (click == 1)
@@ -429,6 +443,14 @@ public class PlayerTickHandler implements ITickHandler
 		{
 			if (target.typeOfHit == EnumMovingObjectType.TILE)
 			{
+				boolean result = !ForgeEventFactory.onPlayerInteract(player, Action.RIGHT_CLICK_BLOCK, x, y, z, side).isCanceled();
+				boolean bool = Minecraft.getMinecraft().playerController.onPlayerRightClick(player, player.worldObj, stack, x, y, z, side, target.hitVec);
+
+				if (result && bool)
+				{
+					return true;
+				}
+				
 				Minecraft.getMinecraft().playerController.clickBlock(x, y, z, side);
 
 				return true;
@@ -518,15 +540,9 @@ public class PlayerTickHandler implements ITickHandler
 					if (click == 1)
 					{
 						player.attackTargetEntityWithCurrentItem(target.entityHit);
-						
-						int i = player.inventory.currentItem;
-						
-						if(offHand)
-						{
-							i = (player.inventory.currentItem - 1 < 0) ? 8 : player.inventory.currentItem - 1;
-							PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketAttackEntity(player, target.entityHit, i, true)));
-						}
-						
+
+						PacketDispatcher.sendPacketToServer(EnumPacketTypes.populatePacket(new PacketAttackEntity(player, target.entityHit, player.inventory.currentItem, true)));
+
 						return true;
 					}
 
