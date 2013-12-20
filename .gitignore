@@ -4,3 +4,5 @@ eclipse/
 .classpath
 .project
 /bin
+
+.settings/
