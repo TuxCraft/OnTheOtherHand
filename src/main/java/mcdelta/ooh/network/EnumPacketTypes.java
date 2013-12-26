@@ -12,6 +12,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 public enum EnumPacketTypes
 {
 	OOH_DATA_SET(PacketSetData.class),
+	OOH_DATA_GET(PacketGetData.class),
 	BREAK_BLOCK(PacketBreakBlock.class),
 	ATTACK_ENTITY(PacketAttackEntity.class);
 
